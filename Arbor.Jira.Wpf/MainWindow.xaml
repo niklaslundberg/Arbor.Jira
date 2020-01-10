@@ -11,8 +11,8 @@
         PreviewKeyDown="WindowKeyDown">
     <Grid VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="1*" MinWidth="300" />
+            <ColumnDefinition Width="*" MinWidth="400" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1" MinHeight="40" />
@@ -20,14 +20,16 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
             <Button Content="Update" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="ButtonBase_OnClick" />
-            <CheckBox x:Name="OpenFilterCheckBox" Content="Open" VerticalAlignment="Center" Checked="OpenFilterCheckBox_Toggled" Unchecked="OpenFilterCheckBox_Toggled" />
+            <CheckBox x:Name="OpenFilterCheckBox" Content="Open" VerticalAlignment="Center" IsChecked="true" Checked="OpenFilterCheckBox_Toggled" Unchecked="OpenFilterCheckBox_Toggled" />
         </StackPanel>
 
-        <ScrollViewer Grid.Column="0" Grid.Row="1">
+        <ScrollViewer Grid.Column="0" Grid.Row="1" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel">
             <ListBox
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    x:Name="IssueList" ItemsSource="{Binding Issues, Mode=OneWay}">
+                    x:Name="IssueList"
+                    SelectedItem="{Binding FirstOrDefault, Mode=OneTime}"
+                    ItemsSource="{Binding Issues, Mode=OneWay}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Navigation;
 
@@ -56,8 +58,22 @@ namespace Arbor.Jira.Wpf
 
         private ViewModel CreateViewModel() => new ViewModel();
 
+        private bool _isLoadingData;
+
         private async Task GetData()
         {
+            if (_app is null)
+            {
+                return;
+            }
+
+            if (_isLoadingData)
+            {
+                return;
+            }
+
+            _isLoadingData = true;
+
             bool? open = OpenFilterCheckBox.IsChecked;
             ImmutableArray<JiraIssue> immutableArray = await _app.Service.GetIssues();
 
@@ -76,7 +92,14 @@ namespace Arbor.Jira.Wpf
 
                     viewModel.Issues.Add(jiraIssue);
                 }
+
+                if (viewModel.Issues.Any())
+                {
+                    IssueList.SelectedItem = viewModel.Issues.First();
+                }
             }
+
+            _isLoadingData = false;
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e)
@@ -94,6 +117,15 @@ namespace Arbor.Jira.Wpf
                                && IssueList.SelectedItem is JiraIssue issue)
             {
                 Clipboard.SetText(issue.GitBranch);
+            }
+        }
+
+        private void ListViewScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (sender is ScrollViewer scv)
+            {
+                scv.ScrollToVerticalOffset(scv.VerticalOffset - e.Delta);
+                e.Handled = true;
             }
         }
     }
