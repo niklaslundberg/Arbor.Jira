@@ -41,18 +41,20 @@
             </ListBox>
         </ScrollViewer>
 
-        <StackPanel Grid.Column="1" Grid.Row="1">
+        <StackPanel Grid.Column="1" Grid.Row="1" Visibility="{Binding Path=ShowDetails, Converter={StaticResource BoolToVisConverter} }" >
             <TextBlock Name="KeyBlock" Text="{Binding Path=SelectedItem.Key, ElementName=IssueList}" />
             <TextBlock Name="SummaryBlock" Text="{Binding Path=SelectedItem.Fields.Summary, ElementName=IssueList}" />
             <TextBlock Name="FullNameBlock" Text="{Binding Path=SelectedItem.FullName, ElementName=IssueList}" />
-            <Button Content="Copy" Click="CopyFullName_Click" />
+            <Button Content="Copy header" Click="CopyFullName_Click" />
             <TextBlock Name="GitBranchBlock" Text="{Binding Path=SelectedItem.GitBranch, ElementName=IssueList}" />
-            <Button Content="Copy" Click="CopyGitBranch_Click" />
+            <Button Content="Copy branch name" Click="CopyGitBranch_Click" />
             <TextBlock>
-               <Hyperlink NavigateUri="{Binding Path=SelectedItem.Url, ElementName=IssueList}" RequestNavigate="Browse">
-               Browse
+                <TextBlock>URL: </TextBlock>
+                <Hyperlink NavigateUri="{Binding Path=SelectedItem.Url, ElementName=IssueList}" RequestNavigate="Browse">
+                    <TextBlock Text="{Binding Path=SelectedItem.Url, ElementName=IssueList}"></TextBlock>
                </Hyperlink>
             </TextBlock>
+            <Button Content="Copy link" Click="CopyLink_Click" />
         </StackPanel>
     </Grid>
 </Window>

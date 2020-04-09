@@ -128,5 +128,13 @@ namespace Arbor.Jira.Wpf
                 e.Handled = true;
             }
         }
+
+        private void CopyLink_Click(object sender, RoutedEventArgs e)
+        {
+            if (IssueList.SelectedItem is JiraIssue issue)
+            {
+                Clipboard.SetText(issue.Url);
+            }
+        }
     }
 }
