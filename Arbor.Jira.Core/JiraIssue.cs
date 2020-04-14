@@ -13,5 +13,7 @@
         public string Self { get; set; }
 
         public string Url => this.GetUrl();
+
+        public override string ToString() => FullName;
     }
 }

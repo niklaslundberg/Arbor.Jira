@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "dependencies": {
+    ".NETCoreApp,Version=v3.1": {
+      "Microsoft.Extensions.Configuration": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "Lu41BWNmwhKr6LgyQvcYBOge0pPvmiaK8R5UHXX4//wBhonJyWcT2OK1mqYfEM5G7pTf31fPrpIHOT6sN7EGOA==",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration.Abstractions": "3.1.0"
+        }
+      },
+      "Microsoft.Extensions.Configuration.Abstractions": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "ESz6bVoDQX7sgWdKHF6G9Pq672T8k+19AFb/txDXwdz7MoqaNQj2/in3agm/3qae9V+WvQZH86LLTNVo0it8vQ==",
+        "dependencies": {
+          "Microsoft.Extensions.Primitives": "3.1.0"
+        }
+      },
+      "Microsoft.Extensions.Primitives": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "LEKAnX7lhUhSoIc2XraCTK3M4IU/LdVUzCe464Sa4+7F4ZJuXHHRzZli2mDbiT4xzAZhgqXbvfnb5+CNDcQFfg=="
+      },
+      "Newtonsoft.Json": {
+        "type": "Transitive",
+        "resolved": "12.0.3",
+        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
+      },
+      "Serilog": {
+        "type": "Transitive",
+        "resolved": "2.9.0",
+        "contentHash": "QzcrD33A3+CsVvwi1I5CSei67ikQnkGrw7SscgL+vZTghaC2aNYg8fiUcedXHzKJFNjgje9rBjzwYGQTKEaXaA=="
+      },
+      "arbor.jira.core": {
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.Configuration": "3.1.0",
+          "Newtonsoft.Json": "12.0.3",
+          "Serilog": "2.9.0"
+        }
+      }
+    }
+  }
+}
