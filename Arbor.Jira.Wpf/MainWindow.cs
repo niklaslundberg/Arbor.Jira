@@ -15,9 +15,9 @@ namespace Arbor.Jira.Wpf
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private JiraApp _app;
+        private JiraApp? _app;
 
         public MainWindow()
         {
@@ -83,7 +83,14 @@ namespace Arbor.Jira.Wpf
 
                 foreach (JiraIssue jiraIssue in immutableArray)
                 {
-                    if (open == true && jiraIssue.Fields.Status.Name.Equals(
+                    var jiraTaskStatus = jiraIssue.Fields.Status;
+
+                    if (jiraTaskStatus is null)
+                    {
+                        continue;
+                    }
+
+                    if (open == true && jiraTaskStatus.Name.Equals(
                             "done",
                             StringComparison.OrdinalIgnoreCase))
                     {

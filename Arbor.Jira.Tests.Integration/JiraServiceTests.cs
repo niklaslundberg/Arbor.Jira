@@ -9,14 +9,16 @@ namespace Arbor.Jira.Tests.Integration
 {
     public class JiraServiceTests
     {
-        private JiraApp _app;
+        private JiraApp? _app;
 
         [Fact(Skip = "Configuration dependent")]
         public async Task GetIssues()
         {
             await Arrange();
 
-            ImmutableArray<JiraIssue> immutableArray = await _app.Service.GetIssues();
+            Assert.NotNull(_app);
+
+            ImmutableArray<JiraIssue> immutableArray = await _app!.Service.GetIssues();
 
             Assert.False(immutableArray.IsDefault);
         }

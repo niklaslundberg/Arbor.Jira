@@ -2,17 +2,17 @@
 {
     public class JiraIssue
     {
-        public TaskFields Fields { get; set; }
+        public TaskFields Fields { get; set; } = new TaskFields();
 
         public string FullName => $"{Key} {Fields.Summary}";
 
-        public string GitBranch => this.GitBranchName();
+        public string? GitBranch => this.GitBranchName();
 
-        public string Key { get; set; }
+        public string? Key { get; set; }
 
-        public string Self { get; set; }
+        public string? Self { get; set; }
 
-        public string Url => this.GetUrl();
+        public string? Url => this.GetUrl();
 
         public override string ToString() => FullName;
     }

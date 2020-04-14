@@ -12,7 +12,7 @@ namespace Arbor.Jira.Core
 
         public IServiceProvider ServiceProvider { get; set; }
 
-        public static async Task<JiraApp> CreateAsync()
+        public static Task<JiraApp> CreateAsync()
         {
             IServiceCollection services = new ServiceCollection().AddDomain();
             ServiceProvider serviceProvider = services.BuildServiceProvider();
@@ -27,7 +27,7 @@ namespace Arbor.Jira.Core
 
             app.ServiceProvider = serviceProvider;
 
-            return app;
+            return Task.FromResult(app);
         }
     }
 }

@@ -24,7 +24,7 @@ namespace Arbor.Jira.Core
 
         public async Task<ImmutableArray<JiraIssue>> GetIssues()
         {
-            if (!Uri.TryCreate(_jiraConfiguration.Url, UriKind.Absolute, out Uri uri))
+            if (string.IsNullOrWhiteSpace(_jiraConfiguration.Url) || !Uri.TryCreate(_jiraConfiguration.Url, UriKind.Absolute, out Uri? uri))
             {
                 throw new InvalidOperationException("Invalid or missing URL");
             }
@@ -44,9 +44,9 @@ namespace Arbor.Jira.Core
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
                 "Basic",
                 Convert.ToBase64String(
-                    Encoding.UTF8.GetBytes(_jiraConfiguration.Username + ":" + _jiraConfiguration.Password)));
+                    Encoding.UTF8.GetBytes($"{_jiraConfiguration.Username}:{_jiraConfiguration.Password}")));
 
-            string url = string.Format(_jiraConfiguration.Url, _jiraConfiguration.Username);
+            string url = string.Format(uri.AbsoluteUri, _jiraConfiguration.Username);
             string json = await httpClient.GetStringAsync(url);
 
             var issues = JsonConvert.DeserializeObject<JiraIssueData>(json);
