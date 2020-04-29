@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -72,16 +73,27 @@ namespace Arbor.Jira.Wpf
                 return;
             }
 
+            MessageTextBox.Text = "Loading data...";
+
             _isLoadingData = true;
 
             bool? open = OpenFilterCheckBox.IsChecked;
-            ImmutableArray<JiraIssue> immutableArray = await _app.Service.GetIssues();
+            var result = await _app.Service.GetIssues();
+
+            if (result.Exception is {})
+            {
+                MessageTextBox.Text = result.Exception.ToString();
+                _isLoadingData = false;
+                return;
+            }
+
+            MessageTextBox.Text = $"Found {result.IssueList.Length} Jira issues";
 
             if (DataContext is ViewModel viewModel)
             {
                 viewModel.Issues.Clear();
 
-                foreach (JiraIssue jiraIssue in immutableArray)
+                foreach (JiraIssue jiraIssue in result.IssueList)
                 {
                     var jiraTaskStatus = jiraIssue.Fields.Status;
 

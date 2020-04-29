@@ -17,6 +17,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1" MinHeight="40" />
             <RowDefinition Height="10*" />
+            <RowDefinition Height="1" MinHeight="100" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
             <Button Content="Update" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="ButtonBase_OnClick" />
@@ -56,5 +57,6 @@
             </TextBlock>
             <Button Content="Copy link" Click="CopyLink_Click" />
         </StackPanel>
+        <TextBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Name="MessageTextBox" VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>

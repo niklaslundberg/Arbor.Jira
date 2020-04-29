@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Arbor.Jira.Core\Arbor.Jira.Core.csproj" />
+    <ProjectReference Include="..\..\src\Arbor.Jira.Core\Arbor.Jira.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -18,7 +18,7 @@ namespace Arbor.Jira.Tests.Integration
 
             Assert.NotNull(_app);
 
-            ImmutableArray<JiraIssue> immutableArray = await _app!.Service.GetIssues();
+            ImmutableArray<JiraIssue> immutableArray = (await _app!.Service.GetIssues()).IssueList;
 
             Assert.False(immutableArray.IsDefault);
         }
