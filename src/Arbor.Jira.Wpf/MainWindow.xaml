@@ -5,19 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Arbor.Jira.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Cursor=""
+        Title="MainWindow" Height="570" Width="800" Cursor=""
         xmlns:dvm="clr-namespace:Arbor.Jira.Wpf"
         d:DataContext ="{d:DesignInstance {x:Type dvm:ViewModel}, IsDesignTimeCreatable=True}"
-        PreviewKeyDown="WindowKeyDown">
+        PreviewKeyDown="WindowKeyDown"
+        MinWidth="570"
+        MinHeight="250">
     <Grid VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" MinWidth="300" />
-            <ColumnDefinition Width="*" MinWidth="400" />
+            <ColumnDefinition Width="*" MinWidth="250" MaxWidth="500" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1" MinHeight="40" />
             <RowDefinition Height="10*" />
-            <RowDefinition Height="1" MinHeight="100" />
+            <RowDefinition Height="1" MinHeight="40" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
             <Button Content="Update" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="ButtonBase_OnClick" />
@@ -25,38 +27,42 @@
         </StackPanel>
 
         <ScrollViewer Grid.Column="0" Grid.Row="1" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel">
-            <ListBox
-                    ScrollViewer.CanContentScroll="True"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    x:Name="IssueList"
-                    SelectedItem="{Binding FirstOrDefault, Mode=OneTime}"
-                    ItemsSource="{Binding Issues, Mode=OneWay}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Path=Key}" Margin="0,0,10,0" />
-                            <TextBlock Text="{Binding Path=Fields.Summary}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <DataGrid Name="IssuesGrid" ItemsSource="{Binding Path=Issues}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectedItem="{Binding SelectedIssue, Mode=OneTime}" SelectionMode="Single" SelectionChanged="IssuesGrid_OnSelectionChanged" CanUserSortColumns="True">
+                <DataGrid.Columns>
+                    <DataGridHyperlinkColumn Header="Key" Binding="{Binding Url}" ContentBinding="{Binding Key}" SortMemberPath="SortOrder">
+                        <DataGridHyperlinkColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <EventSetter Event="Hyperlink.Click" Handler="OnHyperlinkClick" />
+                            </Style>
+                        </DataGridHyperlinkColumn.ElementStyle>
+                    </DataGridHyperlinkColumn>
+                    <DataGridTextColumn Header="Summary" Binding="{Binding Fields.Summary}" IsReadOnly="true" />
+                    <DataGridTextColumn Header="Status" Binding="{Binding Fields.Status.Name}" IsReadOnly="true" />
+                    <DataGridTextColumn Header="Created" Binding="{Binding Fields.Created, StringFormat='yyyy-MM-dd'}" />
+                </DataGrid.Columns>
+            </DataGrid>
         </ScrollViewer>
 
-        <StackPanel Grid.Column="1" Grid.Row="1" Visibility="{Binding Path=ShowDetails, Converter={StaticResource BoolToVisConverter} }" >
-            <TextBlock Name="KeyBlock" Text="{Binding Path=SelectedItem.Key, ElementName=IssueList}" />
-            <TextBlock Name="SummaryBlock" Text="{Binding Path=SelectedItem.Fields.Summary, ElementName=IssueList}" />
-            <TextBlock Name="FullNameBlock" Text="{Binding Path=SelectedItem.FullName, ElementName=IssueList}" />
-            <Button Content="Copy header" Click="CopyFullName_Click" />
-            <TextBlock Name="GitBranchBlock" Text="{Binding Path=SelectedItem.GitBranch, ElementName=IssueList}" />
-            <Button Content="Copy branch name" Click="CopyGitBranch_Click" />
-            <TextBlock>
+        <ScrollViewer Grid.Column="1" Grid.Row="1">
+            <StackPanel Visibility="{Binding Path=ShowDetails, Converter={StaticResource BoolToVisConverter} }"
+                    ScrollViewer.CanContentScroll="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollBarVisibility="Visible">
+                <TextBlock Name="KeyBlock" Text="{Binding SelectedIssue.Key}" />
+                <TextBlock Name="SummaryBlock" Text="{Binding SelectedIssue.Fields.Summary}" />
+                <TextBlock Name="FullNameBlock" Text="{Binding SelectedIssue.FullName}" />
+                <Button Content="Copy header" Click="CopyFullName_Click" />
+                <TextBlock Name="GitBranchBlock" Text="{Binding Path=SelectedIssue.GitBranch}" />
+                <Button Content="Copy branch name" Click="CopyGitBranch_Click" />
+                <TextBlock>
                 <TextBlock>URL: </TextBlock>
-                <Hyperlink NavigateUri="{Binding Path=SelectedItem.Url, ElementName=IssueList}" RequestNavigate="Browse">
-                    <TextBlock Text="{Binding Path=SelectedItem.Url, ElementName=IssueList}"></TextBlock>
+                <Hyperlink NavigateUri="{Binding Path=SelectedIssue.Url}" RequestNavigate="Browse">
+                    <TextBlock Text="{Binding Path=SelectedIssue.Url}"></TextBlock>
                </Hyperlink>
             </TextBlock>
-            <Button Content="Copy link" Click="CopyLink_Click" />
-        </StackPanel>
+                <Button Content="Copy link" Click="CopyLink_Click" />
+            </StackPanel>
+        </ScrollViewer>
         <TextBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Name="MessageTextBox" VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>

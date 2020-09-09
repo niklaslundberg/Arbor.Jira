@@ -10,7 +10,7 @@ namespace Arbor.Jira.Core
     {
         public JiraService Service => ServiceProvider.GetRequiredService<JiraService>();
 
-        public IServiceProvider ServiceProvider { get; set; }
+        public IServiceProvider ServiceProvider { get; set; } = null!;
 
         public static Task<JiraApp> CreateAsync()
         {

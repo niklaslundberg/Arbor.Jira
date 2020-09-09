@@ -41,15 +41,14 @@ namespace Arbor.Jira.Core
                 .Replace("ö", "o")
                 .Replace("Å", "A")
                 .Replace("Ä", "A")
-                .Replace("Ö", "O")
-                .ToLower();
+                .Replace("Ö", "O");
 
             while (trimmedName.Contains("--"))
             {
                 trimmedName = trimmedName.Replace("--", "-");
             }
 
-            return $"{issue.Key}-{trimmedName}";
+            return $"{issue.Key}-{trimmedName}".ToLowerInvariant();
         }
     }
 }
