@@ -4,50 +4,51 @@
     "net5.0-windows7.0": {
       "JetBrains.Annotations": {
         "type": "Direct",
-        "requested": "[2020.1.0, )",
-        "resolved": "2020.1.0",
-        "contentHash": "kD9D2ey3DGeLbfIzS8PkwLFkcF5vCOLk2rdjgfSxTfpoyovl7gAyoS6yq6T77zo9QgJGaVJ7PO/cSgLopnKlzg=="
+        "requested": "[2020.2.0-eap, )",
+        "resolved": "2020.2.0-eap",
+        "contentHash": "xyihHe8f5T5KU389nBd4cjtZZLtx7lT7sFl1OhXEMdyUWX0tCpGyI4r/ank5BCBhUKd8JV3dXu/LKNedOEdZXA=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
-        "requested": "[1.0.0, )",
-        "resolved": "1.0.0",
-        "contentHash": "aZyGyGg2nFSxix+xMkPmlmZSsnGQ3w+mIG23LTxJZHN+GPwTQ5FpPgDo7RMOq+Kcf5D4hFWfXkGhoGstawX13Q==",
+        "requested": "[1.1.0-beta-20204-02, )",
+        "resolved": "1.1.0-beta-20204-02",
+        "contentHash": "nVB0LiCn+q0eprqpQ9BeZ6xMdIobiRTwZlrvyAYDv4Zprek5BUHJ8usXUEtJlCTqQYF5HvLgvwf361jCkhmXCg==",
         "dependencies": {
-          "Microsoft.Build.Tasks.Git": "1.0.0",
-          "Microsoft.SourceLink.Common": "1.0.0"
+          "Microsoft.Build.Tasks.Git": "1.1.0-beta-20204-02",
+          "Microsoft.SourceLink.Common": "1.1.0-beta-20204-02"
         }
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "z2fpmmt+1Jfl+ZnBki9nSP08S1/tbEOxFdsK1rSR+LBehIJz1Xv9/6qOOoGNqlwnAGGVGis1Oj6S8Kt9COEYlQ=="
+        "resolved": "1.1.0-beta-20204-02",
+        "contentHash": "T7mMbmgoT3XXKrXbLeEj6D9fQLZDmF/T8W5NQsrlcfQ24nOLrkr1Cst9cmI44zIH16rIo+4ws0tEqUN+Jw5Iag=="
       },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
-        "resolved": "3.1.3",
-        "contentHash": "nTr4JgTSJScDBD3lahIh1jUBH8A43oG1cqID1qLoHSZhtegslpIyTYxmnehtUKi6xdY5j9R0oWeeGEP+JTcmAg==",
+        "resolved": "5.0.0-preview.8.20407.11",
+        "contentHash": "m+dRgpwZzfRKshodBpHV4i8htAlSL7W+8FkZeJL0GCE9wmaWaoQUdrCY3ZIvOeOF9LRwFve9HFrtSZyhve4SCg==",
         "dependencies": {
-          "Microsoft.Extensions.Configuration.Abstractions": "3.1.3"
+          "Microsoft.Extensions.Configuration.Abstractions": "5.0.0-preview.8.20407.11",
+          "Microsoft.Extensions.Primitives": "5.0.0-preview.8.20407.11"
         }
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "Transitive",
-        "resolved": "3.1.3",
-        "contentHash": "d3vpIJdw+hRtkW1WoNTXhCczakVVId30Tj58li5GbJxz6MVGi8gy4+7JdLBb/wuHFd4+25cZe+Z0WPi207rBbQ==",
+        "resolved": "5.0.0-preview.8.20407.11",
+        "contentHash": "wqV62CpJKBowPH81Itsh5LHRGq9l22Kn1aNdyXhz2QoUFhtmsGpVfiR265Wpi5nHFNZs6qYr3enwPYo1HMD+GQ==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "3.1.3"
+          "Microsoft.Extensions.Primitives": "5.0.0-preview.8.20407.11"
         }
       },
       "Microsoft.Extensions.Primitives": {
         "type": "Transitive",
-        "resolved": "3.1.3",
-        "contentHash": "5gK6qeq9CBCHBfB3Tim3jCJTLafT9FXFBAZZq39rC8adz8mxcjVAuQSw3jGgHqoRk0jwtXKFhXJUVur8vfeuFg=="
+        "resolved": "5.0.0-preview.8.20407.11",
+        "contentHash": "jHhNLjKTRugsRoOqI/dnh+dKr+xxlKjYDHKulTpcvJqq0cOlUGhhGxnyCMJ2C2jLKFdORa0zF8lUb4Y4wh13Pg=="
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "G8DuQY8/DK5NN+3jm5wcMcd9QYD90UV7MiLmdljSJixi3U/vNaeBKmmXUqI4DJCOeWizIUEh4ALhSt58mR+5eg=="
+        "resolved": "1.1.0-beta-20204-02",
+        "contentHash": "3tLuYVu7iPSUGVgSygxZnN4q6ZdXFbKd2A/1Zgva5i6VMoVXoTJwggKVZTGyemlWriziOwY76I5MZI+vnJ8ztA=="
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
@@ -62,8 +63,8 @@
       "arbor.jira.core": {
         "type": "Project",
         "dependencies": {
-          "JetBrains.Annotations": "2020.1.0",
-          "Microsoft.Extensions.Configuration": "3.1.3",
+          "JetBrains.Annotations": "2020.2.0-eap",
+          "Microsoft.Extensions.Configuration": "5.0.0-preview.8.20407.11",
           "Newtonsoft.Json": "12.0.3",
           "Serilog": "2.9.0"
         }

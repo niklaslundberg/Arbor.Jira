@@ -57,8 +57,8 @@
                 <TextBlock>
                 <TextBlock>URL: </TextBlock>
                 <Hyperlink NavigateUri="{Binding Path=SelectedIssue.Url}" RequestNavigate="Browse">
-                    <TextBlock Text="{Binding Path=SelectedIssue.Url}"></TextBlock>
-               </Hyperlink>
+                    <TextBlock Text="{Binding Path=SelectedIssue.Url}" />
+                </Hyperlink>
             </TextBlock>
                 <Button Content="Copy link" Click="CopyLink_Click" />
             </StackPanel>

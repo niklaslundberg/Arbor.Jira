@@ -13,8 +13,8 @@ namespace Arbor.Jira.Wpf
 {
     public class ViewModel : INotifyPropertyChanged
     {
-        private bool _showDetails;
         private JiraIssue? _selectedIssue;
+        private bool _showDetails;
 
         public ViewModel()
         {
@@ -33,8 +33,9 @@ namespace Arbor.Jira.Wpf
                         Key = "JIRA-1" + i,
                         Fields = new TaskFields
                         {
-                            Summary = "Summary 1" + i, Status = new JiraTaskStatus {Name = "Open"},
-                            Created = new DateTime(2020,1,2,9,0,1)
+                            Summary = "Summary 1" + i,
+                            Status = new JiraTaskStatus {Name = "Open"},
+                            Created = new DateTime(year: 2020, month: 1, day: 2, hour: 9, minute: 0, second: 1)
                         },
                         Self = "http://jira.localhost"
                     };
@@ -80,7 +81,7 @@ namespace Arbor.Jira.Wpf
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        private void IssuesOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e) =>
+        private void IssuesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) =>
             ShowDetails = Issues.Count > 0;
 
         [NotifyPropertyChangedInvocator]

@@ -25,9 +25,10 @@ namespace Arbor.Jira.Core
 
         public string? Url => this.GetUrl();
 
-        public string SortOrder
+        public string? SortOrder
         {
-            get; private set;
+            get;
+            private set;
         }
 
         private string GetSortOrder()
@@ -36,8 +37,8 @@ namespace Arbor.Jira.Core
             {
                 return "";
             }
-            var parts = Key.Split("-");
 
+            string[] parts = Key.Split("-");
 
             if (parts.Length != 2)
             {

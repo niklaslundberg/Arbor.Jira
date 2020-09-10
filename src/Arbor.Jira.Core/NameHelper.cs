@@ -11,7 +11,10 @@ namespace Arbor.Jira.Core
                 return string.Empty;
             }
 
-            var uri = new UriBuilder(issue.Self) { Path = $"/browse/{issue.Key}", Query = string.Empty, Fragment = string.Empty };
+            var uri = new UriBuilder(issue.Self)
+            {
+                Path = $"/browse/{issue.Key}", Query = string.Empty, Fragment = string.Empty
+            };
 
             return uri.ToString();
         }

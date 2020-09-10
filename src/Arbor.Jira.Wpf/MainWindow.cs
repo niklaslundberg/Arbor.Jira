@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Immutable;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,7 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Navigation;
-
 using Arbor.Jira.Core;
 
 namespace Arbor.Jira.Wpf
@@ -21,6 +17,8 @@ namespace Arbor.Jira.Wpf
     public partial class MainWindow
     {
         private JiraApp? _app;
+
+        private bool _isLoadingData;
 
         public MainWindow()
         {
@@ -40,7 +38,8 @@ namespace Arbor.Jira.Wpf
             }
         }
 
-        private static void NavigateUrl(Uri uri) => Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") { CreateNoWindow = true });
+        private static void NavigateUrl(Uri uri) =>
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") {CreateNoWindow = true});
 
         private async void ButtonBase_OnClick(object sender, RoutedEventArgs e) => await GetData();
 
@@ -60,9 +59,7 @@ namespace Arbor.Jira.Wpf
             }
         }
 
-        private ViewModel CreateViewModel() => new ViewModel();
-
-        private bool _isLoadingData;
+        private static ViewModel CreateViewModel() => new ViewModel();
 
         private async Task GetData()
         {
@@ -106,8 +103,8 @@ namespace Arbor.Jira.Wpf
                     }
 
                     if (open == true && jiraTaskStatus.Name.Equals(
-                            "done",
-                            StringComparison.OrdinalIgnoreCase))
+                        "done",
+                        StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

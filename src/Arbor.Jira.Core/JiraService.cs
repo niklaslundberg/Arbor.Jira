@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace Arbor.Jira.Core
@@ -63,7 +62,8 @@ namespace Arbor.Jira.Core
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new InvalidOperationException($"Request '{url}' The status code was {response.StatusCode}, body {body}");
+                    throw new InvalidOperationException(
+                        $"Request '{url}' The status code was {response.StatusCode}, body {body}");
                 }
 
                 var issues = JsonConvert.DeserializeObject<JiraIssueData>(body);
