@@ -63,6 +63,8 @@
                 <Button Content="Copy link" Click="CopyLink_Click" />
             </StackPanel>
         </ScrollViewer>
-        <TextBox Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Name="MessageTextBox" VerticalScrollBarVisibility="Auto" />
+        <ScrollViewer Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
+            <TextBox  Name="MessageTextBox" VerticalScrollBarVisibility="Auto" />
+        </ScrollViewer>
     </Grid>
 </Window>
