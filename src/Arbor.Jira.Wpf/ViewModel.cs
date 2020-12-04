@@ -15,10 +15,12 @@ namespace Arbor.Jira.Wpf
     {
         private JiraIssue? _selectedIssue;
         private bool _showDetails;
+        private GitRepository? _selectedRepository;
 
         public ViewModel()
         {
             Issues = new ObservableCollection<JiraIssue>();
+            Repositories = new ObservableCollection<GitRepository>();
 
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
@@ -42,11 +44,15 @@ namespace Arbor.Jira.Wpf
 
                     Issues.Add(jiraIssue);
                 }
+
+                Repositories.Add(new GitRepository("Test 1"));
+                Repositories.Add(new GitRepository("Test 2"));
             }
 
             Issues.CollectionChanged += IssuesOnCollectionChanged;
 
             SelectedIssue = Issues.FirstOrDefault();
+            SelectedRepository = Repositories.FirstOrDefault();
         }
 
         public JiraIssue? SelectedIssue
@@ -55,6 +61,15 @@ namespace Arbor.Jira.Wpf
             set
             {
                 _selectedIssue = value;
+                OnPropertyChanged();
+            }
+        }
+        public GitRepository? SelectedRepository
+        {
+            get => _selectedRepository;
+            set
+            {
+                _selectedRepository = value;
                 OnPropertyChanged();
             }
         }
@@ -78,6 +93,8 @@ namespace Arbor.Jira.Wpf
         }
 
         public ObservableCollection<JiraIssue> Issues { get; }
+
+        public ObservableCollection<GitRepository> Repositories { get; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

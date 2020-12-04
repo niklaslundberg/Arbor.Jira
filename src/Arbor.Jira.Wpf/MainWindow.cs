@@ -18,12 +18,13 @@ namespace Arbor.Jira.Wpf
     {
         private JiraApp? _app;
 
-        private bool _isLoadingData;
+        private bool _isLoadingData => _isLoadingData || _isLoadingIssues;
+        private bool _isLoadingRepistories;
+        private bool _isLoadingIssues;
 
         public MainWindow()
         {
-            var viewModel = CreateViewModel();
-            DataContext = viewModel;
+            DataContext = CreateViewModel();
 
             InitializeComponent();
 
@@ -61,6 +62,33 @@ namespace Arbor.Jira.Wpf
 
         private static ViewModel CreateViewModel() => new ViewModel();
 
+        private async Task GetRepositories()
+        {
+            if (_isLoadingRepistories)
+            {
+                return;
+            }
+
+            _isLoadingRepistories = true;
+
+            if (DataContext is ViewModel viewModel && _app is {})
+            {
+                var gitRepositories = await _app.RepositoryService.GetRepositories().ConfigureAwait(false);
+
+                Dispatcher.Invoke(() =>
+                {
+                    viewModel.Repositories.Clear();
+
+                    foreach (var repository in gitRepositories)
+                    {
+                        viewModel.Repositories.Add(repository);
+                    }
+                });
+            }
+
+            _isLoadingRepistories = false;
+        }
+
         private async Task GetData()
         {
             if (_app is null)
@@ -68,57 +96,61 @@ namespace Arbor.Jira.Wpf
                 return;
             }
 
-            if (_isLoadingData)
+            if (_isLoadingIssues)
             {
                 return;
             }
 
             MessageTextBox.Text = "Loading data...";
 
-            _isLoadingData = true;
+            _isLoadingIssues = true;
 
             bool? open = OpenFilterCheckBox.IsChecked;
-            var result = await _app.Service.GetIssues();
+            var result = await _app.Service.GetIssues().ConfigureAwait(false);
 
-            if (result.Exception is { })
-            {
-                MessageTextBox.Text = result.Exception.ToString();
-                _isLoadingData = false;
-                return;
-            }
-
-            MessageTextBox.Text = $"Found {result.IssueList.Length} Jira issues";
-
-            if (DataContext is ViewModel viewModel)
-            {
-                viewModel.Issues.Clear();
-
-                foreach (JiraIssue jiraIssue in result.IssueList)
+            Dispatcher.Invoke(() =>
                 {
-                    var jiraTaskStatus = jiraIssue.Fields.Status;
-
-                    if (jiraTaskStatus is null)
+                    if (result.Exception is { })
                     {
-                        continue;
+                        MessageTextBox.Text = result.Exception.ToString();
+                        _isLoadingIssues = false;
+
+                        return;
                     }
 
-                    if (open == true && jiraTaskStatus.Name.Equals(
-                        "done",
-                        StringComparison.OrdinalIgnoreCase))
+                    MessageTextBox.Text = $"Found {result.IssueList.Length} Jira issues";
+
+                    if (DataContext is ViewModel viewModel)
                     {
-                        continue;
+                        viewModel.Issues.Clear();
+
+                        foreach (JiraIssue jiraIssue in result.IssueList)
+                        {
+                            var jiraTaskStatus = jiraIssue.Fields.Status;
+
+                            if (jiraTaskStatus is null)
+                            {
+                                continue;
+                            }
+
+                            if (open == true && jiraTaskStatus.Name.Equals(
+                                "done",
+                                StringComparison.OrdinalIgnoreCase))
+                            {
+                                continue;
+                            }
+
+                            viewModel.Issues.Add(jiraIssue);
+                        }
+
+                        if (viewModel.Issues.Any())
+                        {
+                            IssuesGrid.SelectedItem = viewModel.Issues.First();
+                        }
                     }
 
-                    viewModel.Issues.Add(jiraIssue);
-                }
-
-                if (viewModel.Issues.Any())
-                {
-                    IssuesGrid.SelectedItem = viewModel.Issues.First();
-                }
-            }
-
-            _isLoadingData = false;
+                    _isLoadingIssues = false;
+                });
         }
 
         private async void OnLoaded(object sender, RoutedEventArgs e) => await Initialize();
@@ -127,7 +159,11 @@ namespace Arbor.Jira.Wpf
         {
             _app = await JiraApp.CreateAsync();
 
-            await GetData();
+            var repositoriesTask = GetRepositories();
+
+            var dataTask = GetData();
+
+            await Task.WhenAll(dataTask, repositoriesTask);
         }
 
         private async void OpenFilterCheckBox_Toggled(object sender, RoutedEventArgs e) => await GetData();

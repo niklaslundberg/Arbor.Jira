@@ -24,6 +24,15 @@
         <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
             <Button Content="Update" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="ButtonBase_OnClick" />
             <CheckBox x:Name="OpenFilterCheckBox" Content="Open" VerticalAlignment="Center" IsChecked="true" Checked="OpenFilterCheckBox_Toggled" Unchecked="OpenFilterCheckBox_Toggled" />
+            <ComboBox Width="250" Height="20" ItemsSource="{Binding Repositories, Mode=OneWay}" SelectedItem="{Binding SelectedRepository, Mode=OneTime}">
+                <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding DisplayName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+            </ComboBox>
         </StackPanel>
 
         <ScrollViewer Grid.Column="0" Grid.Row="1" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel">
