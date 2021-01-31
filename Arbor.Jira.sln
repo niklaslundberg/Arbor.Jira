@@ -3,18 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.87
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.Jira.Wpf", "Arbor.Jira.Wpf\Arbor.Jira.Wpf.csproj", "{F8F05A6B-E0C0-462E-A812-1882355927D2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.Jira.Wpf", "src\Arbor.Jira.Wpf\Arbor.Jira.Wpf.csproj", "{F8F05A6B-E0C0-462E-A812-1882355927D2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.Jira.Core", "Arbor.Jira.Core\Arbor.Jira.Core.csproj", "{7A452863-96F4-4E8A-A641-7780702BA997}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.Jira.Core", "src\Arbor.Jira.Core\Arbor.Jira.Core.csproj", "{7A452863-96F4-4E8A-A641-7780702BA997}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.Jira.Tests.Integration", "Arbor.Jira.Tests.Integration\Arbor.Jira.Tests.Integration.csproj", "{7C6EB219-9B58-4941-9C8B-797A6A538A0A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.Jira.Tests.Integration", "tests\Arbor.Jira.Tests.Integration\Arbor.Jira.Tests.Integration.csproj", "{7C6EB219-9B58-4941-9C8B-797A6A538A0A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{24C983BA-01DA-4BF8-AAB7-FD65533DDF49}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		Directory.Build.props = Directory.Build.props
+		src\Directory.Build.props = src\Directory.Build.props
+		src\Directory.Build.targets = src\Directory.Build.targets
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
 		version.json = version.json

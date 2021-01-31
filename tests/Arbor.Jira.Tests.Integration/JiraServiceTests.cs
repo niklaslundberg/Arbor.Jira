@@ -1,8 +1,5 @@
-﻿using System.Collections.Immutable;
-using System.Threading.Tasks;
-
+﻿using System.Threading.Tasks;
 using Arbor.Jira.Core;
-
 using Xunit;
 
 namespace Arbor.Jira.Tests.Integration
@@ -18,7 +15,7 @@ namespace Arbor.Jira.Tests.Integration
 
             Assert.NotNull(_app);
 
-            ImmutableArray<JiraIssue> immutableArray = await _app!.Service.GetIssues();
+            var immutableArray = (await _app!.Service.GetIssues()).IssueList;
 
             Assert.False(immutableArray.IsDefault);
         }

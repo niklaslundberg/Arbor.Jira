@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json;
 
 namespace Arbor.Jira.Core
@@ -22,9 +21,9 @@ namespace Arbor.Jira.Core
             _jiraConfiguration = jiraConfiguration;
         }
 
-        public async Task<ImmutableArray<JiraIssue>> GetIssues()
+        public async Task<JiraIssuesResult> GetIssues()
         {
-            if (string.IsNullOrWhiteSpace(_jiraConfiguration.Url) || !Uri.TryCreate(_jiraConfiguration.Url, UriKind.Absolute, out Uri? uri))
+            if (string.IsNullOrWhiteSpace(_jiraConfiguration.Url))
             {
                 throw new InvalidOperationException("Invalid or missing URL");
             }
@@ -46,14 +45,37 @@ namespace Arbor.Jira.Core
                 Convert.ToBase64String(
                     Encoding.UTF8.GetBytes($"{_jiraConfiguration.Username}:{_jiraConfiguration.Password}")));
 
-            string url = string.Format(uri.AbsoluteUri, _jiraConfiguration.Username);
-            string json = await httpClient.GetStringAsync(url);
+            try
+            {
+                string url = string.Format(_jiraConfiguration.Url, _jiraConfiguration.Username);
 
-            var issues = JsonConvert.DeserializeObject<JiraIssueData>(json);
+                if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+                {
+                    throw new InvalidOperationException($"The URL '{url}' is invalid");
+                }
 
-            return issues.Issues
-                .OrderByDescending(issue => issue.Key)
-                .ToImmutableArray();
+                using var request = new HttpRequestMessage(HttpMethod.Get, uri);
+
+                using var response = await httpClient.SendAsync(request);
+
+                string body = await response.Content.ReadAsStringAsync();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new InvalidOperationException(
+                        $"Request '{url}' The status code was {response.StatusCode}, body {body}");
+                }
+
+                var issues = JsonConvert.DeserializeObject<JiraIssueData>(body);
+
+                return JiraIssuesResult.Issues(issues.Issues
+                    .OrderByDescending(issue => issue.Key)
+                    .ToImmutableArray());
+            }
+            catch (Exception ex)
+            {
+                return JiraIssuesResult.Error(ex);
+            }
         }
     }
 }

@@ -1,0 +1,1 @@
+dotnet publish src\Arbor.Jira.Wpf\Arbor.Jira.Wpf.csproj -r win10-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:PublishReadyToRun=false

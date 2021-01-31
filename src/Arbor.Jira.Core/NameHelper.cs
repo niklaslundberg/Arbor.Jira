@@ -11,7 +11,10 @@ namespace Arbor.Jira.Core
                 return string.Empty;
             }
 
-            var uri = new UriBuilder(issue.Self) { Path = $"/browse/{issue.Key}", Query = string.Empty, Fragment = string.Empty };
+            var uri = new UriBuilder(issue.Self)
+            {
+                Path = $"/browse/{issue.Key}", Query = string.Empty, Fragment = string.Empty
+            };
 
             return uri.ToString();
         }
@@ -41,15 +44,14 @@ namespace Arbor.Jira.Core
                 .Replace("ö", "o")
                 .Replace("Å", "A")
                 .Replace("Ä", "A")
-                .Replace("Ö", "O")
-                .ToLower();
+                .Replace("Ö", "O");
 
             while (trimmedName.Contains("--"))
             {
                 trimmedName = trimmedName.Replace("--", "-");
             }
 
-            return $"{issue.Key}-{trimmedName}";
+            return $"{issue.Key}-{trimmedName}".ToLowerInvariant();
         }
     }
 }

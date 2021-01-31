@@ -10,8 +10,8 @@ namespace Arbor.Jira.Core
             var configurationBuilder = new ConfigurationBuilder();
 
             configurationBuilder
-                .Add(new JsonConfigurationSource { Path = "appsettings.json", Optional = true })
-                .Add(new JsonConfigurationSource { Path = "appsettings.user.json", Optional = true });
+                .Add(new JsonConfigurationSource {Path = "appsettings.json", Optional = true})
+                .Add(new JsonConfigurationSource {Path = "appsettings.user.json", Optional = true});
 
             return configurationBuilder.Build();
         }
