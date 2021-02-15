@@ -17,7 +17,6 @@ namespace Arbor.Jira.Core
             IServiceCollection services = new ServiceCollection().AddDomain();
             ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-
             IConfigurationRoot configurationRoot = ConfigurationHelper.CreateConfiguration();
 
             var jiraConfiguration = serviceProvider.GetRequiredService<JiraConfiguration>();

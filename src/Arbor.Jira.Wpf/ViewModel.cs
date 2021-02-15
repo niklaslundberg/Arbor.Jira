@@ -20,6 +20,7 @@ namespace Arbor.Jira.Wpf
         public ViewModel()
         {
             Issues = new ObservableCollection<JiraIssue>();
+            AllIssues = new ObservableCollection<JiraIssue>();
             Repositories = new ObservableCollection<GitRepository>();
 
             if (DesignerProperties.GetIsInDesignMode(new DependencyObject()))
@@ -32,10 +33,10 @@ namespace Arbor.Jira.Wpf
                 {
                     var jiraIssue = new JiraIssue
                     {
-                        Key = "JIRA-1" + i,
+                        Key = $"JIRA-1{i}",
                         Fields = new TaskFields
                         {
-                            Summary = "Summary 1" + i,
+                            Summary = $"Summary 1{i}",
                             Status = new JiraTaskStatus {Name = "Open"},
                             Created = new DateTime(year: 2020, month: 1, day: 2, hour: 9, minute: 0, second: 1)
                         },
@@ -43,6 +44,7 @@ namespace Arbor.Jira.Wpf
                     };
 
                     Issues.Add(jiraIssue);
+                    AllIssues.Add(jiraIssue);
                 }
 
                 Repositories.Add(new GitRepository("Test 1"));
@@ -93,6 +95,7 @@ namespace Arbor.Jira.Wpf
         }
 
         public ObservableCollection<JiraIssue> Issues { get; }
+        public ObservableCollection<JiraIssue> AllIssues { get; }
 
         public ObservableCollection<GitRepository> Repositories { get; }
 

@@ -124,7 +124,7 @@ namespace Arbor.Jira.Wpf
                     {
                         viewModel.Issues.Clear();
 
-                        foreach (JiraIssue jiraIssue in result.IssueList)
+                        foreach (JiraIssue jiraIssue in result.IssueList.OrderByDescending(issue => issue.SortOrder))
                         {
                             var jiraTaskStatus = jiraIssue.Fields.Status;
 
@@ -141,6 +141,7 @@ namespace Arbor.Jira.Wpf
                             }
 
                             viewModel.Issues.Add(jiraIssue);
+                            viewModel.AllIssues.Add(jiraIssue);
                         }
 
                         if (viewModel.Issues.Any())
@@ -212,6 +213,73 @@ namespace Arbor.Jira.Wpf
             {
                 NavigateUrl(hyperlink.NavigateUri);
             }
+        }
+
+        private void FilterTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            Filter();
+        }
+
+        private void Filter()
+        {
+            if (DataContext is not ViewModel viewModel)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(FilterTextBox.Text))
+            {
+                ResetFilter();
+                return;
+            }
+
+            var filtered = viewModel.AllIssues
+                .Where(
+                    issue =>
+                    {
+                        var stringComparison = CaseSensitiveCheckBox.IsChecked == true
+                            ? StringComparison.Ordinal
+                            : StringComparison.OrdinalIgnoreCase;
+
+                        return issue.Match(FilterTextBox.Text, stringComparison);
+                    })
+                .ToArray();
+
+            viewModel.Issues.Clear();
+
+            foreach (var jiraIssue in filtered)
+            {
+                viewModel.Issues.Add(jiraIssue);
+            }
+        }
+
+        private void ResetFilter()
+        {
+            if (DataContext is not ViewModel viewModel)
+            {
+                return;
+            }
+
+            if (viewModel.Issues.Count == viewModel.AllIssues.Count)
+            {
+                return;
+            }
+
+            viewModel.Issues.Clear();
+
+            foreach (var jiraIssue in viewModel.AllIssues)
+            {
+                viewModel.Issues.Add(jiraIssue);
+            }
+
+            FilterTextBox.Text = "";
+        }
+
+        private void Clear_OnClick(object sender, RoutedEventArgs e) => ResetFilter();
+
+        private void FilterCaseSensitive_Click(object sender, RoutedEventArgs e)
+        {
+            Filter();
         }
     }
 }

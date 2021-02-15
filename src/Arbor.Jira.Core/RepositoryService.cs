@@ -8,18 +8,13 @@ namespace Arbor.Jira.Core
     {
         private readonly GitConfiguration _gitConfiguration;
 
-        public RepositoryService(GitConfiguration gitConfiguration)
-        {
-            _gitConfiguration = gitConfiguration;
-        }
+        public RepositoryService(GitConfiguration gitConfiguration) => _gitConfiguration = gitConfiguration;
 
-        public async Task<ImmutableArray<GitRepository>> GetRepositories()
-        {
-            return new List<GitRepository>()
+        public async Task<ImmutableArray<GitRepository>> GetRepositories() =>
+            new List<GitRepository>
             {
-                new GitRepository("Test 1"),
-                new GitRepository("Test 2"),
+                new("Test 1"),
+                new("Test 2"),
             }.ToImmutableArray();
-        }
     }
 }
