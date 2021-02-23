@@ -16,6 +16,7 @@ namespace Arbor.Jira.Wpf
         private JiraIssue? _selectedIssue;
         private bool _showDetails;
         private GitRepository? _selectedRepository;
+        private string _commitMessage;
 
         public ViewModel()
         {
@@ -49,6 +50,8 @@ namespace Arbor.Jira.Wpf
 
                 Repositories.Add(new GitRepository("Test 1"));
                 Repositories.Add(new GitRepository("Test 2"));
+
+                CommitMessage = "Add visual bug";
             }
 
             Issues.CollectionChanged += IssuesOnCollectionChanged;
@@ -56,6 +59,19 @@ namespace Arbor.Jira.Wpf
             SelectedIssue = Issues.FirstOrDefault();
             SelectedRepository = Repositories.FirstOrDefault();
         }
+
+        public string CommitMessage
+        {
+            get => _commitMessage;
+            set
+            {
+                _commitMessage = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(FullCommitMessage));
+            }
+        }
+
+        public string FullCommitMessage => (SelectedIssue?.Key + " " + CommitMessage).Trim();
 
         public JiraIssue? SelectedIssue
         {

@@ -24,7 +24,7 @@
         <StackPanel Grid.ColumnSpan="2" Grid.Row="0" Orientation="Horizontal">
             <GroupBox Header="Load">
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="Load" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="ButtonBase_OnClick" />
+                    <Button Content="Reload" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="OpenIssues_OnClick" />
                     <CheckBox x:Name="OpenFilterCheckBox" Content="Open issues" VerticalAlignment="Center" IsChecked="true" Checked="OpenFilterCheckBox_Toggled" Unchecked="OpenFilterCheckBox_Toggled" />
                 </StackPanel>
             </GroupBox>
@@ -77,13 +77,14 @@
 
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="130" />
                         <ColumnDefinition Width="*" MinWidth="200" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="10" MinHeight="30" />
                         <RowDefinition Height="10" MinHeight="30" />
                         <RowDefinition Height="10" MinHeight="30" />
+                        <RowDefinition Height="10" MinHeight="60" />
                     </Grid.RowDefinitions>
 
                     <Button Content="Copy branch name" Click="CopyGitBranch_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="0" />
@@ -98,6 +99,15 @@
                             <TextBlock Text="{Binding Path=SelectedIssue.Url}" />
                         </Hyperlink>
                     </TextBlock>
+
+                    <Button Content="Copy commit message" Click="CopyCommitMessage_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="3" Height="30"/>
+                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="3">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Name="CommitPrefixBlock" Text="{Binding SelectedIssue.Key}"  Margin="10,0,0,5" />
+                            <TextBox Name="CommitTextBox" Margin="10,0,0,5" MinWidth="200" TextChanged="CommitBlock_OnTextChanged" Text="{Binding CommitMessage, Mode=OneTime}" />
+                        </StackPanel>
+                        <TextBlock Name="CommitFullText" Text="{Binding FullCommitMessage}" Margin="10,0,0,5" />
+                    </StackPanel>
                 </Grid>
             </StackPanel>
         </ScrollViewer>

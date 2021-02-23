@@ -21,7 +21,7 @@ namespace Arbor.Jira.Core
             _jiraConfiguration = jiraConfiguration;
         }
 
-        public async Task<JiraIssuesResult> GetIssues()
+        public async Task<JiraIssuesResult> GetIssues(bool unresolvedOnly = true)
         {
             if (string.IsNullOrWhiteSpace(_jiraConfiguration.Url))
             {
@@ -47,7 +47,7 @@ namespace Arbor.Jira.Core
 
             try
             {
-                string url = string.Format(_jiraConfiguration.Url, _jiraConfiguration.Username);
+                string url =  string.Format(_jiraConfiguration.Url, unresolvedOnly ? "+AND+resolution+%3D+Unresolved" : "");
 
                 if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
                 {

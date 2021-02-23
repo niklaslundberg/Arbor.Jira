@@ -42,7 +42,7 @@ namespace Arbor.Jira.Wpf
         private static void NavigateUrl(Uri uri) =>
             Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") {CreateNoWindow = true});
 
-        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e) => await GetData();
+        private async void OpenIssues_OnClick(object sender, RoutedEventArgs e) => await GetData();
 
         private void CopyFullName_Click(object sender, RoutedEventArgs e)
         {
@@ -105,8 +105,8 @@ namespace Arbor.Jira.Wpf
 
             _isLoadingIssues = true;
 
-            bool? open = OpenFilterCheckBox.IsChecked;
-            var result = await _app.Service.GetIssues().ConfigureAwait(false);
+            bool open = OpenFilterCheckBox.IsChecked ?? true;
+            var result = await _app.Service.GetIssues(open).ConfigureAwait(false);
 
             Dispatcher.Invoke(() =>
                 {
@@ -123,6 +123,7 @@ namespace Arbor.Jira.Wpf
                     if (DataContext is ViewModel viewModel)
                     {
                         viewModel.Issues.Clear();
+                        viewModel.AllIssues.Clear();
 
                         foreach (JiraIssue jiraIssue in result.IssueList.OrderByDescending(issue => issue.SortOrder))
                         {
@@ -277,9 +278,24 @@ namespace Arbor.Jira.Wpf
 
         private void Clear_OnClick(object sender, RoutedEventArgs e) => ResetFilter();
 
-        private void FilterCaseSensitive_Click(object sender, RoutedEventArgs e)
+        private void FilterCaseSensitive_Click(object sender, RoutedEventArgs e) => Filter();
+
+        private void CommitBlock_OnTextChanged(object sender, TextChangedEventArgs e)
         {
-            Filter();
+            if (DataContext is not ViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.CommitMessage = CommitTextBox.Text;
+        }
+
+        private void CopyCommitMessage_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(CommitFullText.Text))
+            {
+                Clipboard.SetText(CommitFullText.Text);
+            }
         }
     }
 }
