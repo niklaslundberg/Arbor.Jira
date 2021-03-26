@@ -8,6 +8,7 @@ namespace Arbor.Jira.Core
     public class JiraIssue
     {
         private string? _key;
+
         public TaskFields Fields { get; set; } = new ();
 
         public string FullName => $"{Key} {Fields.Summary}";
@@ -61,6 +62,10 @@ namespace Arbor.Jira.Core
             private set;
         }
 
+        public int IssueNumber { get; private set; }
+
+        public string IssueNumberText => IssueNumber.ToString(CultureInfo.InvariantCulture);
+
         private string GetSortOrder()
         {
             if (string.IsNullOrEmpty(Key))
@@ -75,12 +80,15 @@ namespace Arbor.Jira.Core
                 return Key;
             }
 
-            if (!int.TryParse(parts[1], out int index))
+            if (!int.TryParse(parts[1], out int issueNumber))
             {
                 return Key;
             }
 
-            string sortOrder = parts[0] + index.ToString(CultureInfo.InvariantCulture)
+            IssueNumber = issueNumber;
+
+            string sortOrder = parts[0] + issueNumber
+                .ToString(CultureInfo.InvariantCulture)
                 .PadLeft(totalWidth: 10, paddingChar: '0');
 
             return sortOrder;

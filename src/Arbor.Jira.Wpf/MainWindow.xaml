@@ -60,6 +60,7 @@
                             </Style>
                         </DataGridHyperlinkColumn.ElementStyle>
                     </DataGridHyperlinkColumn>
+                    <DataGridTextColumn Header="Issue number" Binding="{Binding IssueNumberText}" IsReadOnly="true" SortMemberPath="IssueNumber" />
                     <DataGridTextColumn Header="Summary" Binding="{Binding Fields.Summary}" IsReadOnly="true" />
                     <DataGridTextColumn Header="Status" Binding="{Binding Fields.Status.Name}" IsReadOnly="true" />
                     <DataGridTextColumn Header="Created" Binding="{Binding Fields.Created, StringFormat='yyyy-MM-dd'}" />
@@ -104,7 +105,7 @@
                     <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="3">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Name="CommitPrefixBlock" Text="{Binding SelectedIssue.Key}"  Margin="10,0,0,5" />
-                            <TextBox Name="CommitTextBox" Margin="10,0,0,5" MinWidth="200" TextChanged="CommitBlock_OnTextChanged" Text="{Binding CommitMessage, Mode=OneTime}" />
+                            <TextBox Name="CommitTextBox" Margin="10,0,0,5" MinWidth="200" TextChanged="CommitBlock_OnTextChanged" Text="{Binding CommitMessage, Mode=TwoWay}" />
                         </StackPanel>
                         <TextBlock Name="CommitFullText" Text="{Binding FullCommitMessage}" Margin="10,0,0,5" />
                     </StackPanel>

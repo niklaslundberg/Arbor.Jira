@@ -18,8 +18,7 @@ namespace Arbor.Jira.Wpf
     {
         private JiraApp? _app;
 
-        private bool _isLoadingData => _isLoadingData || _isLoadingIssues;
-        private bool _isLoadingRepistories;
+        private bool _isLoadingRepositories;
         private bool _isLoadingIssues;
 
         public MainWindow()
@@ -60,16 +59,16 @@ namespace Arbor.Jira.Wpf
             }
         }
 
-        private static ViewModel CreateViewModel() => new ViewModel();
+        private static ViewModel CreateViewModel() => new ();
 
         private async Task GetRepositories()
         {
-            if (_isLoadingRepistories)
+            if (_isLoadingRepositories)
             {
                 return;
             }
 
-            _isLoadingRepistories = true;
+            _isLoadingRepositories = true;
 
             if (DataContext is ViewModel viewModel && _app is {})
             {
@@ -86,7 +85,7 @@ namespace Arbor.Jira.Wpf
                 });
             }
 
-            _isLoadingRepistories = false;
+            _isLoadingRepositories = false;
         }
 
         private async Task GetData()
@@ -134,7 +133,7 @@ namespace Arbor.Jira.Wpf
                                 continue;
                             }
 
-                            if (open == true && jiraTaskStatus.Name.Equals(
+                            if (open && jiraTaskStatus.Name.Equals(
                                 "done",
                                 StringComparison.OrdinalIgnoreCase))
                             {
@@ -191,7 +190,7 @@ namespace Arbor.Jira.Wpf
 
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            if (IssuesGrid.SelectedItem is JiraIssue issue && issue.Url is { })
+            if (IssuesGrid.SelectedItem is JiraIssue {Url: { }} issue)
             {
                 Clipboard.SetText(issue.Url);
             }
@@ -200,10 +199,12 @@ namespace Arbor.Jira.Wpf
         private void IssuesGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DataContext is ViewModel viewModel
-                && sender is DataGrid grid
-                && grid.SelectedItem is JiraIssue issue)
+                && sender is DataGrid {SelectedItem: JiraIssue issue})
             {
                 viewModel.SelectedIssue = issue;
+                viewModel.CommitMessage = "";
+
+                CommitTextBox.Focus();
             }
         }
 
@@ -216,10 +217,7 @@ namespace Arbor.Jira.Wpf
             }
         }
 
-        private void FilterTextBox_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            Filter();
-        }
+        private void FilterTextBox_OnTextChanged(object sender, TextChangedEventArgs e) => Filter();
 
         private void Filter()
         {

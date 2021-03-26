@@ -23,6 +23,8 @@ namespace Arbor.Jira.Core
         {
             string trimmedName = issue.Fields.Summary
                 .Replace(" ", "-")
+                .Replace(",", "-")
+                .Replace(";", "-")
                 .Replace(":", "-")
                 .Replace(".", string.Empty)
                 .Replace("!", string.Empty)
