@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "JetBrains.Annotations": {
         "type": "Direct",
-        "requested": "[2020.3.0, )",
-        "resolved": "2020.3.0",
-        "contentHash": "FnX06vtxuoZnhZdR6UHt5kJ7HUC/syODfGLnhPDn1x5sXvvepNyCl4jMtPUzJfsPWh7q0Jo+AIYz5xaVbbyikA=="
+        "requested": "[2021.1.0, )",
+        "resolved": "2021.1.0",
+        "contentHash": "n9JSw5Z+F+6gp9vSv4aLH6p/bx3GAYA6FZVq1wJq/TJySv/kPgFKLGFeS7A8Xa5X4/GWorh5gd43yjamUgnBNA=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
@@ -52,8 +52,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "12.0.3",
-        "contentHash": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg=="
+        "resolved": "13.0.1",
+        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
       },
       "Serilog": {
         "type": "Transitive",
@@ -63,9 +63,9 @@
       "arbor.jira.core": {
         "type": "Project",
         "dependencies": {
-          "JetBrains.Annotations": "2020.3.0",
+          "JetBrains.Annotations": "2021.1.0",
           "Microsoft.Extensions.Configuration": "5.0.0",
-          "Newtonsoft.Json": "12.0.3",
+          "Newtonsoft.Json": "13.0.1",
           "Serilog": "2.10.0"
         }
       }

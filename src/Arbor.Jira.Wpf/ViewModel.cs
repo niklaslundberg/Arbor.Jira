@@ -39,7 +39,8 @@ namespace Arbor.Jira.Wpf
                         {
                             Summary = $"Summary 1{i}",
                             Status = new JiraTaskStatus {Name = "Open"},
-                            Created = new DateTime(year: 2020, month: 1, day: 2, hour: 9, minute: 0, second: 1)
+                            Created = new DateTime(year: 2020, month: 1, day: 2, hour: 9, minute: 0, second: 1),
+                            Description = "As as user I would like to make http requests"
                         },
                         Self = "http://jira.localhost"
                     };
@@ -71,7 +72,7 @@ namespace Arbor.Jira.Wpf
             }
         }
 
-        public string FullCommitMessage => (SelectedIssue?.Key + " " + CommitMessage).Trim();
+        public string FullCommitMessage => $"{(SelectedIssue?.Key + " " + CommitMessage).Trim().Trim('.')}.";
 
         public JiraIssue? SelectedIssue
         {

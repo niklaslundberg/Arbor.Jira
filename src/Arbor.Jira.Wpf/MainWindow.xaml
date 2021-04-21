@@ -64,6 +64,7 @@
                     <DataGridTextColumn Header="Summary" Binding="{Binding Fields.Summary}" IsReadOnly="true" />
                     <DataGridTextColumn Header="Status" Binding="{Binding Fields.Status.Name}" IsReadOnly="true" />
                     <DataGridTextColumn Header="Created" Binding="{Binding Fields.Created, StringFormat='yyyy-MM-dd'}" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding Fields.ShortDescription}" />
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>

@@ -144,6 +144,8 @@ namespace Arbor.Jira.Wpf
                             viewModel.AllIssues.Add(jiraIssue);
                         }
 
+                        Filter();
+
                         if (viewModel.Issues.Any())
                         {
                             IssuesGrid.SelectedItem = viewModel.Issues.First();
@@ -254,6 +256,8 @@ namespace Arbor.Jira.Wpf
 
         private void ResetFilter()
         {
+            FilterTextBox.Text = "";
+
             if (DataContext is not ViewModel viewModel)
             {
                 return;
@@ -270,8 +274,6 @@ namespace Arbor.Jira.Wpf
             {
                 viewModel.Issues.Add(jiraIssue);
             }
-
-            FilterTextBox.Text = "";
         }
 
         private void Clear_OnClick(object sender, RoutedEventArgs e) => ResetFilter();
