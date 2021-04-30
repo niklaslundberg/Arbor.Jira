@@ -5,33 +5,48 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Arbor.Jira.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="570" Width="800" Cursor=""
+        Title="MainWindow" Height="570" Width="1024" Cursor=""
         xmlns:dvm="clr-namespace:Arbor.Jira.Wpf"
         d:DataContext ="{d:DesignInstance {x:Type dvm:ViewModel}, IsDesignTimeCreatable=True}"
         PreviewKeyDown="WindowKeyDown"
-        MinWidth="570"
+        MinWidth="800"
         MinHeight="250">
     <Grid VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" MinWidth="300" />
-            <ColumnDefinition Width="*" MinWidth="250" MaxWidth="500" />
+            <ColumnDefinition Width="1*" MinWidth="600" />
+            <ColumnDefinition Width="*" MinWidth="450" MaxWidth="700" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1" MinHeight="40" />
+            <RowDefinition Height="1" MinHeight="80" />
             <RowDefinition Height="10*" />
             <RowDefinition Height="1" MinHeight="40" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
-            <Button Content="Update" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="ButtonBase_OnClick" />
-            <CheckBox x:Name="OpenFilterCheckBox" Content="Open" VerticalAlignment="Center" IsChecked="true" Checked="OpenFilterCheckBox_Toggled" Unchecked="OpenFilterCheckBox_Toggled" />
+        <StackPanel Grid.ColumnSpan="2" Grid.Row="0" Orientation="Horizontal">
+            <GroupBox Header="Load">
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Reload" MaxWidth="100" HorizontalAlignment="Left" Margin="10,10,10,10" Click="OpenIssues_OnClick" />
+                    <CheckBox x:Name="OpenFilterCheckBox" Content="Open issues" VerticalAlignment="Center" IsChecked="true" Checked="OpenFilterCheckBox_Toggled" Unchecked="OpenFilterCheckBox_Toggled" />
+                </StackPanel>
+            </GroupBox>
+
+            <StackPanel Orientation="Horizontal" Margin="10">
+                <GroupBox Header="Filter" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBox Name="FilterTextBox" Width="125" Height="20" Margin="0, 00, 0, 0" TextChanged="FilterTextBox_OnTextChanged" />
+                        <CheckBox Click="FilterCaseSensitive_Click" Name="CaseSensitiveCheckBox" Margin="10,0,0,0">Case sensitive</CheckBox>
+                        <Button Margin="10,0,0,0" Click="Clear_OnClick">Clear</Button>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+
             <ComboBox Width="250" Height="20" ItemsSource="{Binding Repositories, Mode=OneWay}" SelectedItem="{Binding SelectedRepository, Mode=OneTime}">
                 <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding DisplayName}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding DisplayName}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
             </ComboBox>
         </StackPanel>
 
@@ -45,9 +60,11 @@
                             </Style>
                         </DataGridHyperlinkColumn.ElementStyle>
                     </DataGridHyperlinkColumn>
+                    <DataGridTextColumn Header="Issue number" Binding="{Binding IssueNumberText}" IsReadOnly="true" SortMemberPath="IssueNumber" />
                     <DataGridTextColumn Header="Summary" Binding="{Binding Fields.Summary}" IsReadOnly="true" />
                     <DataGridTextColumn Header="Status" Binding="{Binding Fields.Status.Name}" IsReadOnly="true" />
                     <DataGridTextColumn Header="Created" Binding="{Binding Fields.Created, StringFormat='yyyy-MM-dd'}" />
+                    <DataGridTextColumn Header="Description" Binding="{Binding Fields.ShortDescription}" />
                 </DataGrid.Columns>
             </DataGrid>
         </ScrollViewer>
@@ -56,20 +73,44 @@
             <StackPanel Visibility="{Binding Path=ShowDetails, Converter={StaticResource BoolToVisConverter} }"
                     ScrollViewer.CanContentScroll="True"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    ScrollViewer.HorizontalScrollBarVisibility="Visible">
+                    ScrollViewer.HorizontalScrollBarVisibility="Visible" Margin="10,0,0,0">
                 <TextBlock Name="KeyBlock" Text="{Binding SelectedIssue.Key}" />
-                <TextBlock Name="SummaryBlock" Text="{Binding SelectedIssue.Fields.Summary}" />
-                <TextBlock Name="FullNameBlock" Text="{Binding SelectedIssue.FullName}" />
-                <Button Content="Copy header" Click="CopyFullName_Click" />
-                <TextBlock Name="GitBranchBlock" Text="{Binding Path=SelectedIssue.GitBranch}" />
-                <Button Content="Copy branch name" Click="CopyGitBranch_Click" />
-                <TextBlock>
-                <TextBlock>URL: </TextBlock>
-                <Hyperlink NavigateUri="{Binding Path=SelectedIssue.Url}" RequestNavigate="Browse">
-                    <TextBlock Text="{Binding Path=SelectedIssue.Url}" />
-                </Hyperlink>
-            </TextBlock>
-                <Button Content="Copy link" Click="CopyLink_Click" />
+                <TextBlock Name="SummaryBlock" Text="{Binding SelectedIssue.Fields.Summary}" Margin="0,0,0,10" />
+
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="130" />
+                        <ColumnDefinition Width="*" MinWidth="200" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="10" MinHeight="30" />
+                        <RowDefinition Height="10" MinHeight="30" />
+                        <RowDefinition Height="10" MinHeight="30" />
+                        <RowDefinition Height="10" MinHeight="60" />
+                    </Grid.RowDefinitions>
+
+                    <Button Content="Copy branch name" Click="CopyGitBranch_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="0" />
+                    <TextBlock Name="GitBranchBlock" Text="{Binding Path=SelectedIssue.GitBranch}" Grid.Column="1" Grid.Row="0" Margin="10,5,0,5" />
+
+                    <Button Content="Copy header" Click="CopyFullName_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="1"/>
+                    <TextBlock Name="FullNameBlock" Text="{Binding SelectedIssue.FullName}" Grid.Column="1" Grid.Row="1" Margin="10,0,0,5" />
+
+                    <Button Content="Copy link" Click="CopyLink_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="2"/>
+                    <TextBlock Grid.Column="1" Grid.Row="2" Margin="10,0,0,0">
+                        <Hyperlink NavigateUri="{Binding Path=SelectedIssue.Url}" RequestNavigate="Browse">
+                            <TextBlock Text="{Binding Path=SelectedIssue.Url}" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                    <Button Content="Copy commit message" Click="CopyCommitMessage_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="3" Height="30"/>
+                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="3">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Name="CommitPrefixBlock" Text="{Binding SelectedIssue.Key}"  Margin="10,0,0,5" />
+                            <TextBox Name="CommitTextBox" Margin="10,0,0,5" MinWidth="200" TextChanged="CommitBlock_OnTextChanged" Text="{Binding CommitMessage, Mode=TwoWay}" />
+                        </StackPanel>
+                        <TextBlock Name="CommitFullText" Text="{Binding FullCommitMessage}" Margin="10,0,0,5" />
+                    </StackPanel>
+                </Grid>
             </StackPanel>
         </ScrollViewer>
         <ScrollViewer Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">

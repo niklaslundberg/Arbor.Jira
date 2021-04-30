@@ -18,8 +18,7 @@ namespace Arbor.Jira.Wpf
     {
         private JiraApp? _app;
 
-        private bool _isLoadingData => _isLoadingData || _isLoadingIssues;
-        private bool _isLoadingRepistories;
+        private bool _isLoadingRepositories;
         private bool _isLoadingIssues;
 
         public MainWindow()
@@ -42,7 +41,7 @@ namespace Arbor.Jira.Wpf
         private static void NavigateUrl(Uri uri) =>
             Process.Start(new ProcessStartInfo("cmd", $"/c start {uri}") {CreateNoWindow = true});
 
-        private async void ButtonBase_OnClick(object sender, RoutedEventArgs e) => await GetData();
+        private async void OpenIssues_OnClick(object sender, RoutedEventArgs e) => await GetData();
 
         private void CopyFullName_Click(object sender, RoutedEventArgs e)
         {
@@ -60,16 +59,16 @@ namespace Arbor.Jira.Wpf
             }
         }
 
-        private static ViewModel CreateViewModel() => new ViewModel();
+        private static ViewModel CreateViewModel() => new ();
 
         private async Task GetRepositories()
         {
-            if (_isLoadingRepistories)
+            if (_isLoadingRepositories)
             {
                 return;
             }
 
-            _isLoadingRepistories = true;
+            _isLoadingRepositories = true;
 
             if (DataContext is ViewModel viewModel && _app is {})
             {
@@ -86,7 +85,7 @@ namespace Arbor.Jira.Wpf
                 });
             }
 
-            _isLoadingRepistories = false;
+            _isLoadingRepositories = false;
         }
 
         private async Task GetData()
@@ -105,8 +104,8 @@ namespace Arbor.Jira.Wpf
 
             _isLoadingIssues = true;
 
-            bool? open = OpenFilterCheckBox.IsChecked;
-            var result = await _app.Service.GetIssues().ConfigureAwait(false);
+            bool open = OpenFilterCheckBox.IsChecked ?? true;
+            var result = await _app.Service.GetIssues(open).ConfigureAwait(false);
 
             Dispatcher.Invoke(() =>
                 {
@@ -123,8 +122,9 @@ namespace Arbor.Jira.Wpf
                     if (DataContext is ViewModel viewModel)
                     {
                         viewModel.Issues.Clear();
+                        viewModel.AllIssues.Clear();
 
-                        foreach (JiraIssue jiraIssue in result.IssueList)
+                        foreach (JiraIssue jiraIssue in result.IssueList.OrderByDescending(issue => issue.SortOrder))
                         {
                             var jiraTaskStatus = jiraIssue.Fields.Status;
 
@@ -133,7 +133,7 @@ namespace Arbor.Jira.Wpf
                                 continue;
                             }
 
-                            if (open == true && jiraTaskStatus.Name.Equals(
+                            if (open && jiraTaskStatus.Name.Equals(
                                 "done",
                                 StringComparison.OrdinalIgnoreCase))
                             {
@@ -141,7 +141,10 @@ namespace Arbor.Jira.Wpf
                             }
 
                             viewModel.Issues.Add(jiraIssue);
+                            viewModel.AllIssues.Add(jiraIssue);
                         }
+
+                        Filter();
 
                         if (viewModel.Issues.Any())
                         {
@@ -189,7 +192,7 @@ namespace Arbor.Jira.Wpf
 
         private void CopyLink_Click(object sender, RoutedEventArgs e)
         {
-            if (IssuesGrid.SelectedItem is JiraIssue issue && issue.Url is { })
+            if (IssuesGrid.SelectedItem is JiraIssue {Url: { }} issue)
             {
                 Clipboard.SetText(issue.Url);
             }
@@ -198,10 +201,12 @@ namespace Arbor.Jira.Wpf
         private void IssuesGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (DataContext is ViewModel viewModel
-                && sender is DataGrid grid
-                && grid.SelectedItem is JiraIssue issue)
+                && sender is DataGrid {SelectedItem: JiraIssue issue})
             {
                 viewModel.SelectedIssue = issue;
+                viewModel.CommitMessage = "";
+
+                CommitTextBox.Focus();
             }
         }
 
@@ -211,6 +216,85 @@ namespace Arbor.Jira.Wpf
                 && hyperlink.NavigateUri is {})
             {
                 NavigateUrl(hyperlink.NavigateUri);
+            }
+        }
+
+        private void FilterTextBox_OnTextChanged(object sender, TextChangedEventArgs e) => Filter();
+
+        private void Filter()
+        {
+            if (DataContext is not ViewModel viewModel)
+            {
+                return;
+            }
+
+            if (string.IsNullOrEmpty(FilterTextBox.Text))
+            {
+                ResetFilter();
+                return;
+            }
+
+            var filtered = viewModel.AllIssues
+                .Where(
+                    issue =>
+                    {
+                        var stringComparison = CaseSensitiveCheckBox.IsChecked == true
+                            ? StringComparison.Ordinal
+                            : StringComparison.OrdinalIgnoreCase;
+
+                        return issue.Match(FilterTextBox.Text, stringComparison);
+                    })
+                .ToArray();
+
+            viewModel.Issues.Clear();
+
+            foreach (var jiraIssue in filtered)
+            {
+                viewModel.Issues.Add(jiraIssue);
+            }
+        }
+
+        private void ResetFilter()
+        {
+            FilterTextBox.Text = "";
+
+            if (DataContext is not ViewModel viewModel)
+            {
+                return;
+            }
+
+            if (viewModel.Issues.Count == viewModel.AllIssues.Count)
+            {
+                return;
+            }
+
+            viewModel.Issues.Clear();
+
+            foreach (var jiraIssue in viewModel.AllIssues)
+            {
+                viewModel.Issues.Add(jiraIssue);
+            }
+        }
+
+        private void Clear_OnClick(object sender, RoutedEventArgs e) => ResetFilter();
+
+        private void FilterCaseSensitive_Click(object sender, RoutedEventArgs e) => Filter();
+
+        private void CommitBlock_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (DataContext is not ViewModel viewModel)
+            {
+                return;
+            }
+
+            viewModel.CommitMessage = CommitTextBox.Text;
+        }
+
+        private void CopyCommitMessage_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(CommitFullText.Text))
+            {
+                Clipboard.SetText(CommitFullText.Text);
             }
         }
     }
