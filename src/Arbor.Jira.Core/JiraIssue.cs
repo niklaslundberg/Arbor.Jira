@@ -27,7 +27,7 @@ namespace Arbor.Jira.Core
                 };
             }
 
-            object?[] fields = {Key, GitBranch, FullName, Url, Fields.Created, Fields.Status?.Name};
+            object?[] fields = {Key, GitBranch, FullName, Url, Fields.Created, Fields.Status?.Name, Fields.Description};
 
             return fields.Any(MatchProperty);
         }
