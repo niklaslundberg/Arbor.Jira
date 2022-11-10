@@ -17,6 +17,8 @@ namespace Arbor.Jira.Wpf
         private bool _showDetails;
         private GitRepository? _selectedRepository;
         private string _commitMessage;
+        private string? _customBranchName;
+        private string? _statusMessage;
 
         public ViewModel()
         {
@@ -47,10 +49,11 @@ namespace Arbor.Jira.Wpf
 
                     Issues.Add(jiraIssue);
                     AllIssues.Add(jiraIssue);
+                    CustomBranchName = jiraIssue.GitBranch;
                 }
 
-                Repositories.Add(new GitRepository("Test 1"));
-                Repositories.Add(new GitRepository("Test 2"));
+                Repositories.Add(new GitRepository(new RepositoryConfig(){FullPath = @"C:\Temp\Test1"}));
+                Repositories.Add(new GitRepository(new RepositoryConfig(){FullPath = @"C:\Temp\Test2"}));
 
                 CommitMessage = "Add visual bug";
             }
@@ -71,6 +74,19 @@ namespace Arbor.Jira.Wpf
                 OnPropertyChanged(nameof(FullCommitMessage));
             }
         }
+
+        public string? CustomBranchName
+        {
+            get => _customBranchName;
+            set
+            {
+                _customBranchName = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(ActualBranchName));
+            }
+        }
+
+        public string? ActualBranchName => CustomBranchName?.ToGitCompatibleName() ?? SelectedIssue?.GitBranch;
 
         public string FullCommitMessage => $"{(SelectedIssue?.Key + " " + CommitMessage).Trim().Trim('.')}.";
 
@@ -115,6 +131,16 @@ namespace Arbor.Jira.Wpf
         public ObservableCollection<JiraIssue> AllIssues { get; }
 
         public ObservableCollection<GitRepository> Repositories { get; }
+
+        public string? StatusMessage
+        {
+            get => _statusMessage;
+            set
+            {
+                _statusMessage = value;
+                OnPropertyChanged();
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 

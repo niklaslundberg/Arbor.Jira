@@ -21,11 +21,20 @@ namespace Arbor.Jira.Core
 
         public static string GitBranchName(this JiraIssue issue)
         {
-            string trimmedName = issue.Fields.Summary
+            string trimmedName = ToGitCompatibleName(issue.Fields.Summary);
+
+            return $"{issue.Key}-{trimmedName}".ToLowerInvariant();
+        }
+
+        public static string ToGitCompatibleName(this string branchName)
+        {
+            string trimmedName = branchName
                 .Replace(" ", "-")
                 .Replace(",", "-")
                 .Replace(";", "-")
                 .Replace(":", "-")
+                .Replace("%", "-")
+                .Replace("|", "-")
                 .Replace(".", string.Empty)
                 .Replace("!", string.Empty)
                 .Replace("\"", string.Empty)
@@ -53,7 +62,7 @@ namespace Arbor.Jira.Core
                 trimmedName = trimmedName.Replace("--", "-");
             }
 
-            return $"{issue.Key}-{trimmedName}".ToLowerInvariant();
+            return trimmedName;
         }
     }
 }

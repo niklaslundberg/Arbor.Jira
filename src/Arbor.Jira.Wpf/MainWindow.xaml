@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Arbor.Jira.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="570" Width="1024" Cursor=""
+        Title="MainWindow" Height="800" Width="1600" Cursor=""
         xmlns:dvm="clr-namespace:Arbor.Jira.Wpf"
         d:DataContext ="{d:DesignInstance {x:Type dvm:ViewModel}, IsDesignTimeCreatable=True}"
         PreviewKeyDown="WindowKeyDown"
@@ -39,7 +39,7 @@
                 </GroupBox>
             </StackPanel>
 
-            <ComboBox Width="250" Height="20" ItemsSource="{Binding Repositories, Mode=OneWay}" SelectedItem="{Binding SelectedRepository, Mode=OneTime}">
+            <ComboBox Name="RepositoriesComboBox" Width="250" Height="20" ItemsSource="{Binding Repositories, Mode=OneWay}" SelectedItem="{Binding SelectedRepository, Mode=OneTime}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -50,10 +50,10 @@
             </ComboBox>
         </StackPanel>
 
-        <ScrollViewer Grid.Column="0" Grid.Row="1" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel">
+        <ScrollViewer Grid.Column="0" Grid.Row="1" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Auto">
             <DataGrid Name="IssuesGrid" ItemsSource="{Binding Path=Issues}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectedItem="{Binding SelectedIssue, Mode=OneTime}" SelectionMode="Single" SelectionChanged="IssuesGrid_OnSelectionChanged" CanUserSortColumns="True">
                 <DataGrid.Columns>
-                    <DataGridHyperlinkColumn Header="Key" Binding="{Binding Url}" ContentBinding="{Binding Key}" SortMemberPath="SortOrder">
+                    <DataGridHyperlinkColumn Header="Key" Binding="{Binding Url}" ContentBinding="{Binding Key}" SortMemberPath="SortOrder" MinWidth="70">
                         <DataGridHyperlinkColumn.ElementStyle>
                             <Style TargetType="TextBlock">
                                 <EventSetter Event="Hyperlink.Click" Handler="OnHyperlinkClick" />
@@ -66,6 +66,29 @@
                     <DataGridTextColumn Header="Created" Binding="{Binding Fields.Created, StringFormat='yyyy-MM-dd'}" />
                     <DataGridTextColumn Header="Description" Binding="{Binding Fields.ShortDescription}" />
                 </DataGrid.Columns>
+                <DataGrid.Resources>
+                    <Style TargetType="{x:Type Hyperlink}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}"
+                             Value="True">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Foreground" Value="White"/>
+                                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                    <Style TargetType="{x:Type DataGridCell}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}"
+                             Value="True">
+                                <DataTrigger.Setters>
+                                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                </DataTrigger.Setters>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.Resources>
             </DataGrid>
         </ScrollViewer>
 
@@ -86,6 +109,8 @@
                         <RowDefinition Height="10" MinHeight="30" />
                         <RowDefinition Height="10" MinHeight="30" />
                         <RowDefinition Height="10" MinHeight="30" />
+                        <RowDefinition Height="10" MinHeight="30" />
+                        <RowDefinition Height="10" MinHeight="60" />
                         <RowDefinition Height="10" MinHeight="60" />
                     </Grid.RowDefinitions>
 
@@ -102,19 +127,33 @@
                         </Hyperlink>
                     </TextBlock>
 
-                    <Button Content="Copy commit message" Click="CopyCommitMessage_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="3" Height="30"/>
-                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="3">
+                    <Button Content="Copy ID" Click="CopyIssueIdLink_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="3"/>
+                    <TextBlock Grid.Column="1" Grid.Row="3" Margin="10,0,0,0">
+                        <TextBlock Text="{Binding Path=SelectedIssue.Key}" />
+                    </TextBlock>
+
+                    <Button Content="Copy commit message" Click="CopyCommitMessage_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="4" Height="30"/>
+                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="4">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Name="CommitPrefixBlock" Text="{Binding SelectedIssue.Key}"  Margin="10,0,0,5" />
                             <TextBox Name="CommitTextBox" Margin="10,0,0,5" MinWidth="200" TextChanged="CommitBlock_OnTextChanged" Text="{Binding CommitMessage, Mode=TwoWay}" />
                         </StackPanel>
                         <TextBlock Name="CommitFullText" Text="{Binding FullCommitMessage}" Margin="10,0,0,5" />
                     </StackPanel>
+
+                    <Button Content="Ensure branch exists" Click="TryCreateBranchExists_Click" Margin="0,5,0,5" Grid.Column="0" Grid.Row="5"/>
+                    <StackPanel Orientation="Vertical" Grid.Column="1" Grid.Row="5">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Name="BranchNameDefault" Text="{Binding SelectedIssue.GitBranch}"  Margin="10,0,0,5" />
+                            <TextBox Name="BranchNameCustom" Margin="10,0,0,5" MinWidth="200" Text="{Binding CustomBranchName}" TextChanged="BranchNameCustom_OnTextChanged" />
+                            <TextBlock Name="ActualBranchNameBlock" Text="{Binding ActualBranchName}"  Margin="10,0,0,5" />
+                        </StackPanel>
+                    </StackPanel>
                 </Grid>
             </StackPanel>
         </ScrollViewer>
         <ScrollViewer Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2">
-            <TextBox  Name="MessageTextBox" VerticalScrollBarVisibility="Auto" />
+            <TextBox Name="MessageTextBox" VerticalScrollBarVisibility="Auto" Text="{Binding StatusMessage}" />
         </ScrollViewer>
     </Grid>
 </Window>

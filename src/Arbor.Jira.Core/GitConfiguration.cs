@@ -6,5 +6,7 @@ namespace Arbor.Jira.Core
     public class GitConfiguration
     {
         public string? BasePath { get; set; }
+
+        public RepositoryConfig[]? Repositories { get; set; }
     }
 }
