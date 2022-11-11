@@ -8,3 +8,5 @@ IF "%GITHUB_ACTIONS%" EQ "GITHUB_ACTIONS" (
 )
 
 call dotnet arbor-build
+
+EXIT /B %ERRORLEVEL%
