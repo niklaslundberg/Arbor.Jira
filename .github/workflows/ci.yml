@@ -23,10 +23,5 @@ jobs:
         dotnet tool install --global Arbor.Build.Bootstrapper --version "*-*"
     - name: build
       shell: cmd
-      env:
-        Arbor.Build.NuGet.PackageUpload.Server.ApiKey: ${{ secrets.myget }}
-        Arbor.Build.NuGet.PackageUpload.Server.Uri: "https://www.myget.org/F/arbor/api/v2/package"
-        Arbor.Build.NuGet.PackageUpload.Enabled: "true"
-        Arbor.Build.NuGet.PackageUpload.ForceUploadEnabled: "true"
       run: |
         build\build.bat
