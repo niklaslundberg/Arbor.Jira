@@ -1,9 +1,8 @@
-﻿namespace Arbor.Jira.Core
-{
-    public class JiraTaskStatus
-    {
-        public string Name { get; set; } = "";
+﻿namespace Arbor.Jira.Core;
 
-        public override string ToString() => Name;
-    }
+public class JiraTaskStatus
+{
+    public string Name { get; set; } = "";
+
+    public override string ToString() => Name;
 }

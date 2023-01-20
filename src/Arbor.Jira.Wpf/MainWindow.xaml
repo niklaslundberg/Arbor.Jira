@@ -39,7 +39,7 @@
                 </GroupBox>
             </StackPanel>
 
-            <ComboBox Name="RepositoriesComboBox" Width="250" Height="20" ItemsSource="{Binding Repositories, Mode=OneWay}" SelectedItem="{Binding SelectedRepository, Mode=OneTime}">
+            <ComboBox Name="RepositoriesComboBox" Width="250" Height="20" ItemsSource="{Binding Repositories, Mode=OneWay}" SelectedItem="{Binding SelectedRepository, Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -51,7 +51,7 @@
         </StackPanel>
 
         <ScrollViewer Grid.Column="0" Grid.Row="1" PreviewMouseWheel="ListViewScrollViewer_PreviewMouseWheel" HorizontalScrollBarVisibility="Auto">
-            <DataGrid Name="IssuesGrid" ItemsSource="{Binding Path=Issues}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectedItem="{Binding SelectedIssue, Mode=OneTime}" SelectionMode="Single" SelectionChanged="IssuesGrid_OnSelectionChanged" CanUserSortColumns="True">
+            <DataGrid Name="IssuesGrid" ItemsSource="{Binding Path=Issues}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" SelectedItem="{Binding SelectedIssue, Mode=TwoWay}" SelectionMode="Single" SelectionChanged="IssuesGrid_OnSelectionChanged" CanUserSortColumns="True">
                 <DataGrid.Columns>
                     <DataGridHyperlinkColumn Header="Key" Binding="{Binding Url}" ContentBinding="{Binding Key}" SortMemberPath="SortOrder" MinWidth="70">
                         <DataGridHyperlinkColumn.ElementStyle>
@@ -99,6 +99,24 @@
                     ScrollViewer.HorizontalScrollBarVisibility="Visible" Margin="10,0,0,0">
                 <TextBlock Name="KeyBlock" Text="{Binding SelectedIssue.Key}" />
                 <TextBlock Name="SummaryBlock" Text="{Binding SelectedIssue.Fields.Summary}" Margin="0,0,0,10" />
+                <ListView Name="ComponentListView" ItemsSource="{Binding SelectedIssue.Fields.Components}" Margin="0,0,0,10">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock>
+                                    <Hyperlink NavigateUri="{Binding Self}" RequestNavigate="Browse">
+                                        <TextBlock Text="{Binding Path=Name}" />
+                                    </Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
 
                 <Grid Margin="0,10,0,0">
                     <Grid.ColumnDefinitions>

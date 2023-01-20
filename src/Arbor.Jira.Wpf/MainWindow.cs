@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +13,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using Arbor.Jira.Core;
 using CliWrap;
+using Newtonsoft.Json;
 
 namespace Arbor.Jira.Wpf;
 
@@ -24,6 +27,7 @@ public partial class MainWindow
     private bool _isLoadingIssues;
 
     private bool _isLoadingRepositories;
+    private readonly string _cacheFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Arbor.Jira", "cache.json");
 
     public MainWindow()
     {
@@ -65,18 +69,18 @@ public partial class MainWindow
 
     private static ViewModel CreateViewModel() => new();
 
-    private async Task GetRepositories()
+    private Task GetRepositories()
     {
         if (_isLoadingRepositories)
         {
-            return;
+            return Task.CompletedTask;
         }
 
         _isLoadingRepositories = true;
 
         if (DataContext is ViewModel viewModel && _app is { })
         {
-            var gitRepositories = await _app.RepositoryService.GetRepositories().ConfigureAwait(false);
+            var gitRepositories = _app.RepositoryService.GetRepositories();
 
             Dispatcher.Invoke(() =>
             {
@@ -95,16 +99,41 @@ public partial class MainWindow
         }
 
         _isLoadingRepositories = false;
+        return Task.CompletedTask;
+    }
+
+    private async Task<JiraIssuesResult?> GetCachedData()
+    {
+        if (File.Exists(_cacheFile))
+        {
+            try
+            {
+                string json = await File.ReadAllTextAsync(_cacheFile);
+
+                if (json.Length == 0)
+                {
+                    return null;
+                }
+
+                var jiraIssuesResult = JsonConvert.DeserializeObject<JiraIssue[]>(json);
+
+                if (jiraIssuesResult is { Length: > 0 })
+                {
+                    return JiraIssuesResult.Issues(jiraIssuesResult.ToImmutableArray());
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        return null;
     }
 
     private async Task GetData()
     {
         if (_app is null)
-        {
-            return;
-        }
-
-        if (_isLoadingIssues)
         {
             return;
         }
@@ -116,63 +145,116 @@ public partial class MainWindow
 
         viewModel.StatusMessage = "Loading data...";
 
+        bool open = OpenFilterCheckBox.IsChecked ?? true;
+
+        var dataSourceTask = _app.Service.GetIssues(open).ConfigureAwait(false);
+
+        if (viewModel.AllIssues.Count == 0)
+        {
+            var data = await GetCachedData();
+
+            if (data is { })
+            {
+                Dispatcher.Invoke(() => InitializeViewModel(data, viewModel, open, "cache"));
+            }
+        }
+
+        if (_isLoadingIssues)
+        {
+            return;
+        }
+
         _isLoadingIssues = true;
 
-        bool open = OpenFilterCheckBox.IsChecked ?? true;
-        var result = await _app.Service.GetIssues(open).ConfigureAwait(false);
+        JiraIssuesResult result = await dataSourceTask;
+
+        try
+        {
+            if (result.IssueList.Length > 0)
+            {
+                var cacheFileInfo = new FileInfo(_cacheFile);
+
+                if (cacheFileInfo.Directory?.Exists != true)
+                {
+                    cacheFileInfo.Directory!.Create();
+                }
+
+                await File.WriteAllTextAsync(_cacheFile, JsonConvert.SerializeObject(result.IssueList));
+            }
+        }
+        catch (Exception)
+        {
+            // ignore
+        }
 
         Dispatcher.Invoke(() =>
         {
-            if (DataContext is not ViewModel asViewModel)
-            {
-                return;
-            }
-
-            if (result.Exception is { })
-            {
-                asViewModel.StatusMessage = result.Exception.ToString();
-                _isLoadingIssues = false;
-
-                return;
-            }
-
-            asViewModel.StatusMessage = $"Found {result.IssueList.Length} Jira issues";
-
-            viewModel.Issues.Clear();
-            viewModel.AllIssues.Clear();
-
-            foreach (var jiraIssue in result.IssueList.OrderByDescending(issue => issue.SortOrder))
-            {
-                var jiraTaskStatus = jiraIssue.Fields.Status;
-
-                if (jiraTaskStatus is null)
-                {
-                    continue;
-                }
-
-                if (open && jiraTaskStatus.Name.Equals(
-                        "done",
-                        StringComparison.OrdinalIgnoreCase))
-                {
-                    continue;
-                }
-
-                viewModel.Issues.Add(jiraIssue);
-                viewModel.AllIssues.Add(jiraIssue);
-            }
-
-            Filter();
-
-            if (viewModel.Issues.Any())
-            {
-                var selected = viewModel.Issues.First();
-                viewModel.CustomBranchName = selected.GitBranch;
-                BranchNameCustom.Text = viewModel.CustomBranchName ?? "";
-                IssuesGrid.SelectedItem = selected;
-            }
-
-            _isLoadingIssues = false;
+            InitializeViewModel(result, viewModel, open, "server");
         });
+    }
+
+    private void InitializeViewModel(JiraIssuesResult result, ViewModel viewModel, bool open, string source)
+    {
+        if (DataContext is not ViewModel asViewModel)
+        {
+            return;
+        }
+
+        if (result.Exception is { })
+        {
+            asViewModel.StatusMessage = result.Exception.ToString();
+            _isLoadingIssues = false;
+
+            return;
+        }
+
+        var currentSelected = viewModel.SelectedIssue;
+
+        asViewModel.StatusMessage = $"Found {result.IssueList.Length} Jira issues from {source}";
+
+        viewModel.Issues.Clear();
+        viewModel.AllIssues.Clear();
+
+        foreach (var jiraIssue in result.IssueList.OrderByDescending(issue => issue.SortOrder))
+        {
+            var jiraTaskStatus = jiraIssue.Fields.Status;
+
+            if (jiraTaskStatus is null)
+            {
+                continue;
+            }
+
+            if (open && jiraTaskStatus.Name.Equals(
+                    "done",
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            viewModel.Issues.Add(jiraIssue);
+            viewModel.AllIssues.Add(jiraIssue);
+        }
+
+        Filter();
+
+        if (viewModel.Issues.Any() && (currentSelected is null || !viewModel.Issues.Any(issue => issue.IssueNumber == currentSelected.IssueNumber)))
+        {
+            var selected = viewModel.Issues.First();
+            viewModel.CustomBranchName = selected.GitBranch;
+            BranchNameCustom.Text = viewModel.CustomBranchName ?? "";
+            IssuesGrid.SelectedItem = selected;
+        }
+        else if (currentSelected is { } && viewModel.Issues.SingleOrDefault(issue => issue.IssueNumber == currentSelected.IssueNumber) is { } newSelected)
+        {
+            viewModel.SelectedIssue = newSelected;
+        }
+
+        if (viewModel.Issues.Any())
+        {
+            BranchNameCustom.Text = viewModel.CustomBranchName ?? "";
+        }
+
+        _isLoadingIssues = false;
     }
 
     private async void OnLoaded(object sender, RoutedEventArgs e) => await Initialize();
@@ -192,9 +274,10 @@ public partial class MainWindow
 
     private void WindowKeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Key == Key.C && Keyboard.Modifiers == ModifierKeys.Control
-                           && IssuesGrid.SelectedItem is JiraIssue issue
-                           && !string.IsNullOrWhiteSpace(issue.GitBranch))
+        if (e.Key == Key.C
+            && Keyboard.Modifiers == ModifierKeys.Control
+            && IssuesGrid.SelectedItem is JiraIssue issue
+            && !string.IsNullOrWhiteSpace(issue.GitBranch))
         {
             Clipboard.SetText(issue.GitBranch);
         }
@@ -233,8 +316,7 @@ public partial class MainWindow
 
     private void OnHyperlinkClick(object sender, RoutedEventArgs e)
     {
-        if (e.OriginalSource is Hyperlink hyperlink
-            && hyperlink.NavigateUri is { })
+        if (e.OriginalSource is Hyperlink { NavigateUri: { } } hyperlink)
         {
             NavigateUrl(hyperlink.NavigateUri);
         }
@@ -449,22 +531,13 @@ public partial class MainWindow
             return GitBranch.Unknown(trimmed);
         }
 
-        if (trimmed == "develop")
+        return trimmed switch
         {
-            return GitBranch.Develop;
-        }
-
-        if (trimmed == "main")
-        {
-            return GitBranch.Main;
-        }
-
-        if (trimmed == "master")
-        {
-            return GitBranch.Master;
-        }
-
-        return new GitBranch(trimmed);
+            "develop" => GitBranch.Develop,
+            "main" => GitBranch.Main,
+            "master" => GitBranch.Master,
+            _ => new GitBranch(trimmed)
+        };
     }
 
     private static async Task<GitStatus> GetGitStatus(GitRepository gitRepository)

@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace Arbor.Jira.Core
+namespace Arbor.Jira.Core;
+
+public class JiraIssueData
 {
-    public class JiraIssueData
-    {
-        public JiraIssue[] Issues { get; set; } = Array.Empty<JiraIssue>();
-    }
+    public JiraIssue[] Issues { get; set; } = Array.Empty<JiraIssue>();
 }

@@ -58,6 +58,7 @@ public class GitBranch : IEquatable<GitBranch>
     public string Name { get; }
 
     public string? Message { get; }
+
     public override string ToString() => $"{nameof(Name)}: {Name}";
 
     public static GitBranch Unknown(string result) => new("Unknown", result);

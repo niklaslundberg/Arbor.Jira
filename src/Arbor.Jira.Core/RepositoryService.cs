@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Arbor.Jira.Core;
 
@@ -12,7 +11,7 @@ public class RepositoryService
 
     public RepositoryService(GitConfiguration gitConfiguration) => _gitConfiguration = gitConfiguration;
 
-    public async Task<ImmutableArray<GitRepository>> GetRepositories()
+    public ImmutableArray<GitRepository> GetRepositories()
     {
         if (string.IsNullOrWhiteSpace(_gitConfiguration.BasePath))
         {

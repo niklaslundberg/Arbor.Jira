@@ -1,12 +1,11 @@
 ﻿using JetBrains.Annotations;
 
-namespace Arbor.Jira.Core
-{
-    [PublicAPI]
-    public class GitConfiguration
-    {
-        public string? BasePath { get; set; }
+namespace Arbor.Jira.Core;
 
-        public RepositoryConfig[]? Repositories { get; set; }
-    }
+[PublicAPI]
+public class GitConfiguration
+{
+    public string? BasePath { get; set; }
+
+    public RepositoryConfig[]? Repositories { get; set; }
 }

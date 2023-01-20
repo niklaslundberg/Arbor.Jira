@@ -1,25 +1,25 @@
 ﻿using System.Threading.Tasks;
 using Arbor.Jira.Core;
+using FluentAssertions;
 using Xunit;
 
-namespace Arbor.Jira.Tests.Integration
+namespace Arbor.Jira.Tests.Integration;
+
+public class JiraServiceTests
 {
-    public class JiraServiceTests
+    private JiraApp? _app;
+
+    [Fact(Skip = "Configuration dependent")]
+    public async Task GetIssues()
     {
-        private JiraApp? _app;
+        await Arrange();
 
-        [Fact(Skip = "Configuration dependent")]
-        public async Task GetIssues()
-        {
-            await Arrange();
+        _app.Should().NotBeNull();
 
-            Assert.NotNull(_app);
+        var immutableArray = (await _app!.Service.GetIssues()).IssueList;
 
-            var immutableArray = (await _app!.Service.GetIssues()).IssueList;
-
-            Assert.False(immutableArray.IsDefault);
-        }
-
-        private async Task Arrange() => _app = await JiraApp.CreateAsync();
+        immutableArray.IsDefault.Should().BeFalse();
     }
+
+    private async Task Arrange() => _app = await JiraApp.CreateAsync();
 }
