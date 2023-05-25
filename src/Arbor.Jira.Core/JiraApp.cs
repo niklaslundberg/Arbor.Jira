@@ -3,35 +3,34 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Arbor.Jira.Core
+namespace Arbor.Jira.Core;
+
+public class JiraApp
 {
-    public class JiraApp
+    public JiraService Service => ServiceProvider.GetRequiredService<JiraService>();
+    public RepositoryService RepositoryService => ServiceProvider.GetRequiredService<RepositoryService>();
+
+    public IServiceProvider ServiceProvider { get; set; } = null!;
+
+    public static Task<JiraApp> CreateAsync()
     {
-        public JiraService Service => ServiceProvider.GetRequiredService<JiraService>();
-        public RepositoryService RepositoryService => ServiceProvider.GetRequiredService<RepositoryService>();
+        IServiceCollection services = new ServiceCollection().AddDomain();
+        ServiceProvider serviceProvider = services.BuildServiceProvider();
 
-        public IServiceProvider ServiceProvider { get; set; } = null!;
+        IConfigurationRoot configurationRoot = ConfigurationHelper.CreateConfiguration();
 
-        public static Task<JiraApp> CreateAsync()
-        {
-            IServiceCollection services = new ServiceCollection().AddDomain();
-            ServiceProvider serviceProvider = services.BuildServiceProvider();
+        var jiraConfiguration = serviceProvider.GetRequiredService<JiraConfiguration>();
+        IConfigurationSection jiraSection = configurationRoot.GetSection("jira");
+        jiraSection.Bind(jiraConfiguration);
 
-            IConfigurationRoot configurationRoot = ConfigurationHelper.CreateConfiguration();
+        var gitConfiguration = serviceProvider.GetRequiredService<GitConfiguration>();
+        IConfigurationSection gitSection = configurationRoot.GetSection("git");
+        gitSection.Bind(gitConfiguration);
 
-            var jiraConfiguration = serviceProvider.GetRequiredService<JiraConfiguration>();
-            IConfigurationSection jiraSection = configurationRoot.GetSection("jira");
-            jiraSection.Bind(jiraConfiguration);
+        var app = serviceProvider.GetRequiredService<JiraApp>();
 
-            var gitConfiguration = serviceProvider.GetRequiredService<GitConfiguration>();
-            IConfigurationSection gitSection = configurationRoot.GetSection("git");
-            gitSection.Bind(gitConfiguration);
+        app.ServiceProvider = serviceProvider;
 
-            var app = serviceProvider.GetRequiredService<JiraApp>();
-
-            app.ServiceProvider = serviceProvider;
-
-            return Task.FromResult(app);
-        }
+        return Task.FromResult(app);
     }
 }

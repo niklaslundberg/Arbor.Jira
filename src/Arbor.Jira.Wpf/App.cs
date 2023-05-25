@@ -1,18 +1,17 @@
 ﻿using System.Globalization;
 using System.Windows;
 
-namespace Arbor.Jira.Wpf
+namespace Arbor.Jira.Wpf;
+
+/// <summary>
+/// Interaction logic for App.xaml
+/// </summary>
+public partial class App : Application
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : Application
+    public App()
     {
-        public App()
-        {
-            var currentCulture = new CultureInfo("sv-SE");
-            CultureInfo.CurrentCulture = currentCulture;
-            CultureInfo.CurrentUICulture = currentCulture;
-        }
+        var currentCulture = new CultureInfo("sv-SE");
+        CultureInfo.CurrentCulture = currentCulture;
+        CultureInfo.CurrentUICulture = currentCulture;
     }
 }

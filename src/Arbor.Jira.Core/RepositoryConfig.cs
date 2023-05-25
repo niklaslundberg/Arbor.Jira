@@ -6,4 +6,5 @@ public class RepositoryConfig
     public string? FullPath { get; init; }
     public string? DisplayName { get; init; }
     public string? DefaultGitBranch { get; init; }
+    public string[]? JiraComponents { get; set; }
 }
