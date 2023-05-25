@@ -20,8 +20,8 @@
       },
       "CliWrap": {
         "type": "Transitive",
-        "resolved": "3.5.0",
-        "contentHash": "JhC8xnY2uVPD8/o/wj8o+5uYQ8jiWJ9rrgTI6i5QqZco++nelZ8RgBjcLmPMJMQMvAXu39obUA/aeEEaYdQUhw=="
+        "resolved": "3.6.3",
+        "contentHash": "z0fxJnrwkARqINdjTj/zeCjF/PBkmahoh8ap6Itdf5yCnFNhwnHHbEaOlklXccsIYHTZMZgHIOCVUpKnd2dovQ=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -57,8 +57,8 @@
       },
       "Newtonsoft.Json": {
         "type": "Transitive",
-        "resolved": "13.0.1",
-        "contentHash": "ppPFpBcvxdsfUonNcvITKqLl3bqxWbDCZIzDWHzjpdAHRFfZe0Dw9HmA0+za13IdyrgJwpkDTDA9fHaxOrt20A=="
+        "resolved": "13.0.3",
+        "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
       },
       "Serilog": {
         "type": "Transitive",
@@ -68,10 +68,10 @@
       "arbor.jira.core": {
         "type": "Project",
         "dependencies": {
-          "CliWrap": "[3.5.0, )",
+          "CliWrap": "[3.6.3, )",
           "JetBrains.Annotations": "[2022.3.1, )",
           "Microsoft.Extensions.Configuration": "[7.0.0, )",
-          "Newtonsoft.Json": "[13.0.1, )",
+          "Newtonsoft.Json": "[13.0.3, )",
           "Serilog": "[2.12.0, )"
         }
       }
